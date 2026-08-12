@@ -348,7 +348,7 @@ export function getSelfUpdateUnavailableInstruction(
 	const method = detectInstallMethod();
 	const target = normalizeSelfUpdatePackageTarget(updatePackageTarget);
 	if (method === "bun-binary") {
-		return `Download from: https://github.com/code-yeongyu/senpi/releases/latest`;
+		return `Download from: https://github.com/kht6163/omopi/releases/latest`;
 	}
 	const command = getSelfUpdateCommandForMethod(method, packageName, target, npmCommand);
 	if (command) {
@@ -537,7 +537,7 @@ export function getShareViewerUrl(gistId: string): string {
 }
 
 // =============================================================================
-// User Config Paths (~/.senpi/agent/*)
+// User Config Paths (~/.omopi/agent/*)
 // =============================================================================
 
 /** Marker file that identifies a flat-layout config directory. */
@@ -562,14 +562,14 @@ export function resolveAgentDir(cwd: string, homeDir: string, envDir?: string): 
 	return projectConfigDir ? join(projectConfigDir, "agent") : join(homeDir, CONFIG_DIR_NAME, "agent");
 }
 
-/** Get the agent config directory (e.g., ~/.senpi/agent/) */
+/** Get the agent config directory (e.g., ~/.omopi/agent/) */
 export function getAgentDir(): string {
 	return resolveAgentDir(process.cwd(), homedir(), envValue("CODING_AGENT_DIR"));
 }
 
 /**
  * Short, display-only spelling of the agent directory for help text and tips, e.g.
- * `~/.omo` for a flat brand or `~/.senpi/agent` for the engine layout.
+ * `~/.omo` for a flat brand or `~/.omopi/agent` for the engine layout.
  */
 export function agentDirLabel(): string {
 	return CONFIG_FLAT_LAYOUT ? `~/${CONFIG_DIR_NAME}` : `~/${CONFIG_DIR_NAME}/agent`;

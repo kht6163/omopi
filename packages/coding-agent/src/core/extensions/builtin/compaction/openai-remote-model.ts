@@ -172,7 +172,7 @@ export function createOpenAiRemoteCompactionHeaders(
 	if (!headers.has("authorization")) return undefined;
 
 	if (model.api === "openai-codex-responses") {
-		headers.set("originator", "senpi");
+		headers.set("originator", "omopi");
 		headers.set("user-agent", `senpi (${platform()} ${release()}; ${arch()})`);
 		headers.set("OpenAI-Beta", "responses=experimental");
 		headers.set("accept", "text/event-stream");

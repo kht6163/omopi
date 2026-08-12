@@ -610,6 +610,9 @@ export async function main(args: string[], options?: MainOptions) {
 	}
 
 	const cwd = process.cwd();
+	// Package/config one-shots exit before the full startup path, so migrate
+	// legacy config dirs first (e.g. ~/.senpi/agent → ~/.omopi/agent).
+	runMigrations(cwd);
 	const agentDir = getAgentDir();
 	const fromSourceWarning = getFromSourceRealConfigWarning(agentDir);
 	if (fromSourceWarning) {

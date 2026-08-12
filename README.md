@@ -1,16 +1,24 @@
-# senpi
+# omopi
 
+Personal coding-agent CLI based on **[code-yeongyu/senpi](https://github.com/code-yeongyu/senpi)** (itself a fork of [badlogic/pi-mono](https://github.com/badlogic/pi-mono)).
 
-<p align="center">
-  <a href="https://discord.gg/PUwSMR9XNk"><img alt="Discord" src="https://img.shields.io/badge/discord-community-5865F2?style=flat-square&logo=discord&logoColor=white" /></a>
-  <a href="https://github.com/code-yeongyu/senpi/actions/workflows/ci.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/code-yeongyu/senpi/ci.yml?style=flat-square&branch=main" /></a>
-</p>
+| | |
+|---|---|
+| **CLI** | `omopi` (aliases: `omo`, `pi`, `senpi`) |
+| **Config** | `~/.omopi/agent/` (migrates from `~/.senpi/agent` and `~/.pi/agent` on first run) |
+| **Repo** | https://github.com/kht6163/omopi |
 
-> ⚠️ **Experimental.** senpi is an opinionated, in-flight fork of [badlogic/pi-mono](https://github.com/badlogic/pi-mono). It powers [Dori](https://sisyphuslabs.ai) under the hood and reflects what one specific AI assistant needs from a coding-agent runtime. Use it; don't bet a production pipeline on it.
+> ⚠️ **Experimental.** This tree tracks senpi closely. Use it; don't bet a production pipeline on it.
+
+> **Upstream chain**: [pi-mono](https://github.com/badlogic/pi-mono) → [senpi](https://github.com/code-yeongyu/senpi) → **omopi**
+
+---
+
+## About senpi (upstream)
+
+The monorepo content below still describes **senpi**'s design (OMO influence, Dori runtime, extension ecosystem). In this fork the product name and CLI are **omopi**; where docs say `senpi install`, run `omopi install` instead.
 
 senpi is a senpai-name pun and a more **sane** pi with extra batteries included — a TypeScript monorepo that rebrands pi-mono's coding agent as `senpi` and ships a curated set of builtin extensions and core tweaks on top of upstream.
-
-> **Upstream**: [pi-mono](https://github.com/badlogic/pi-mono) by [@mariozechner](https://github.com/badlogic) — tools for building AI agents and managing LLM deployments.
 
 ## Inspired by OMO, built as Dori's coding-agent runtime
 

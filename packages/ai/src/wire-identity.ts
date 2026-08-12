@@ -6,7 +6,7 @@
  * default keeps the engine's identity so a standalone install is unchanged.
  */
 
-const DEFAULT_WIRE_IDENTITY = "senpi";
+const DEFAULT_WIRE_IDENTITY = "omopi";
 
 let wireIdentity = DEFAULT_WIRE_IDENTITY;
 

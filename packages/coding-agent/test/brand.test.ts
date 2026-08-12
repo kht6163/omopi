@@ -132,11 +132,11 @@ describe("config module brand integration", () => {
 
 		const config = await import("../src/config.ts");
 
-		expect(config.APP_NAME).toBe("senpi");
-		expect(config.CONFIG_DIR_NAME).toBe(".senpi");
+		expect(config.APP_NAME).toBe("omopi");
+		expect(config.CONFIG_DIR_NAME).toBe(".omopi");
 		expect(config.CONFIG_FLAT_LAYOUT).toBe(false);
 		expect(config.DISPLAY_VERSION).toBe(config.VERSION);
-		expect(config.ENV_AGENT_DIR).toBe("SENPI_CODING_AGENT_DIR");
+		expect(config.ENV_AGENT_DIR).toBe("OMOPI_CODING_AGENT_DIR");
 	});
 
 	test("branded install renames the product", async () => {

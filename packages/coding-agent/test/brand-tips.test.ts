@@ -14,17 +14,19 @@ function catalogSources(): Array<{ file: string; source: string }> {
 describe("tips and help text", () => {
 	test("no catalog file hardcodes the product name or its config directory", () => {
 		for (const { file, source } of catalogSources()) {
-			expect({ file, hit: /\bsenpi\b/i.test(source) }).toEqual({ file, hit: false });
+			expect({ file, hit: /\b(senpi|omopi)\b/i.test(source) }).toEqual({ file, hit: false });
 		}
 	});
 
 	test("help text names the running product instead of a fixed brand", () => {
-		expect(/\bsenpi\b/i.test(readFileSync(HELP_URL, "utf-8"))).toBe(false);
+		const help = readFileSync(HELP_URL, "utf-8");
+		expect(/\bsenpi\b/i.test(help)).toBe(false);
+		expect(/\bomopi\b/i.test(help)).toBe(false);
 	});
 
-	test("a standalone install still reads as senpi", () => {
-		expect(APP_NAME).toBe("senpi");
-		expect(CONFIG_DIR_NAME).toBe(".senpi");
-		expect(agentDirLabel()).toBe("~/.senpi/agent");
+	test("a standalone install still reads as omopi", () => {
+		expect(APP_NAME).toBe("omopi");
+		expect(CONFIG_DIR_NAME).toBe(".omopi");
+		expect(agentDirLabel()).toBe("~/.omopi/agent");
 	});
 });

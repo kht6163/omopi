@@ -63,11 +63,21 @@ export function migrateLegacySenpiDirs(cwd: string): void {
 	const globalNewMomDir = join(homeDir, CONFIG_DIR_NAME, "mom");
 	const projectNewDir = join(cwd, CONFIG_DIR_NAME);
 	const shouldMigrateHomeConfig = isWithinOrSamePath(globalNewAgentDir, join(homeDir, CONFIG_DIR_NAME));
+	// Prior product names that may still hold config on disk.
+	const legacyConfigDirs = [".pi", ".senpi"].filter((name) => name !== CONFIG_DIR_NAME);
 
 	const moves: Array<readonly [string, string, string]> = [
 		[join(cwd, ".pi"), projectNewDir, "project config directory"],
 		[join(cwd, CONFIG_DIR_NAME, ".pi"), projectNewDir, "nested project config directory"],
 	];
+
+	for (const legacyDir of legacyConfigDirs) {
+		if (legacyDir === ".pi") continue; // already covered above
+		moves.push(
+			[join(cwd, legacyDir), projectNewDir, `project ${legacyDir} config directory`],
+			[join(cwd, CONFIG_DIR_NAME, legacyDir), projectNewDir, `nested project ${legacyDir} config directory`],
+		);
+	}
 
 	if (shouldMigrateHomeConfig) {
 		moves.unshift(
@@ -76,6 +86,23 @@ export function migrateLegacySenpiDirs(cwd: string): void {
 			[join(homeDir, ".pi", "mom"), globalNewMomDir, "global mom directory"],
 			[join(homeDir, CONFIG_DIR_NAME, ".pi", "mom"), globalNewMomDir, "nested global mom directory"],
 		);
+		for (const legacyDir of legacyConfigDirs) {
+			if (legacyDir === ".pi") continue;
+			moves.unshift(
+				[join(homeDir, legacyDir, "agent"), globalNewAgentDir, `global ${legacyDir} agent directory`],
+				[
+					join(homeDir, CONFIG_DIR_NAME, legacyDir, "agent"),
+					globalNewAgentDir,
+					`nested global ${legacyDir} agent directory`,
+				],
+				[join(homeDir, legacyDir, "mom"), globalNewMomDir, `global ${legacyDir} mom directory`],
+				[
+					join(homeDir, CONFIG_DIR_NAME, legacyDir, "mom"),
+					globalNewMomDir,
+					`nested global ${legacyDir} mom directory`,
+				],
+			);
+		}
 	}
 
 	for (const [oldPath, newPath, label] of moves) {

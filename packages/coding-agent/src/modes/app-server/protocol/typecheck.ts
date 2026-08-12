@@ -17,7 +17,7 @@ import type {
 
 const initializeParams: InitializeParams = {
 	clientInfo: {
-		name: "senpi",
+		name: "omopi",
 		title: null,
 		version: "0.0.0",
 	},

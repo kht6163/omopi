@@ -11,6 +11,8 @@
 ### Added
 
 - Product/CLI rename to **omopi**. Global bin is `omopi` (with `omo` kept as a short alias alongside `pi` / `senpi`).
+- Config directory is **`.omopi`** (`~/.omopi/agent/`). First launch migrates from `~/.senpi/agent` and `~/.pi/agent` when present.
+- App identity strings (help, system prompt `APP_NAME`, wire originator default, MCP OAuth client name) use **omopi**.
 
 ### Changed
 

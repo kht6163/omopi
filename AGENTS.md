@@ -1,4 +1,4 @@
-# Senpi Repository Guide
+# omopi Repository Guide
 
 Generated: 2026-08-07
 Commit: `4f26b8282`
@@ -6,16 +6,25 @@ Branch: `main`
 
 Metadata above records the source state used for this generation pass.
 
-## Fork provenance (omopi)
+## Product identity
+
+| Field | Value |
+|---|---|
+| Product name | **omopi** |
+| CLI | `omopi` (aliases: `omo`, `pi`, `senpi`) |
+| Config dir | **`.omopi`** → agent state at `~/.omopi/agent/` |
+| Env prefix | `OMOPI_*` (e.g. `OMOPI_CODING_AGENT_DIR`) |
+| npm package name (engine) | still `@code-yeongyu/senpi` (workspace lockstep with upstream) |
+
+Prefer **omopi** in user-facing docs, prompts (`You are omopi…` via `APP_NAME`), help text, and UI. Keep **senpi** only when referring to upstream `code-yeongyu/senpi` or package/path identifiers that still use that name.
+
+## Fork provenance
 
 This repository (`kht6163/omopi`) is a personal GitHub fork of **[code-yeongyu/senpi](https://github.com/code-yeongyu/senpi)**.
-
-Product name: **omopi** (CLI: `omopi`; `omo` kept as a short alias). Config dir remains `.senpi` unless a brand profile overrides it.
 
 | Field | Value |
 |---|---|
 | Upstream | `code-yeongyu/senpi` |
-| Product / CLI | **omopi** (`omo` alias, also `pi` / `senpi`) |
 | Forked package version | **`2026.8.12-4`** (`@code-yeongyu/senpi` at fork time) |
 | Upstream commit at fork | `5678c2cd9ff8f4f8e66545fbe64084c56193fd09` |
 | Upstream commit (short) | `5678c2cd9` |
@@ -25,7 +34,7 @@ Product name: **omopi** (CLI: `omopi`; `omo` kept as a short alias). Config dir 
 
 When rebasing or syncing, compare against that commit/version first, then fetch `upstream/main`.
 
-Senpi is an extension-first coding-agent monorepo. Keep changes scoped, preserve upstream mergeability, and read the nearest `AGENTS.md` plus every applicable `changes.md` before editing.
+omopi is an extension-first coding-agent monorepo (senpi-compatible). Keep changes scoped, preserve upstream mergeability, and read the nearest `AGENTS.md` plus every applicable `changes.md` before editing.
 
 ## MANDATORY EXECUTION PROTOCOLS — NON-NEGOTIABLE
 

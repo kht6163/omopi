@@ -4,14 +4,14 @@
 	"description": "Coding agent CLI with read, bash, edit, write tools and session management",
 	"type": "module",
 	"piConfig": {
-		"name": "senpi",
-		"configDir": ".senpi"
+		"name": "omopi",
+		"configDir": ".omopi"
 	},
 	"bin": {
-		"senpi": "dist/cli.js",
-		"pi": "dist/cli.js",
 		"omopi": "dist/cli.js",
-		"omo": "dist/cli.js"
+		"omo": "dist/cli.js",
+		"pi": "dist/cli.js",
+		"senpi": "dist/cli.js"
 	},
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -138,7 +138,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/code-yeongyu/senpi.git",
+		"url": "git+https://github.com/kht6163/omopi.git",
 		"directory": "packages/coding-agent"
 	},
 	"engines": {

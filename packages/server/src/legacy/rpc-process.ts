@@ -50,7 +50,7 @@ export class RpcProcessInstance {
 	private getSpawnCommand(): { command: string; args: string[] } {
 		if (isBunBinary) {
 			return {
-				command: join(dirname(process.execPath), process.platform === "win32" ? "senpi.exe" : "senpi"),
+				command: join(dirname(process.execPath), process.platform === "win32" ? "omopi.exe" : "omopi"),
 				args: ["--mode", "rpc"],
 			};
 		}

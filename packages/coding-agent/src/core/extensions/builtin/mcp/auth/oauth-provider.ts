@@ -92,7 +92,7 @@ export class McpOAuthProvider implements OAuthClientProvider {
 			grant_types: ["authorization_code", "refresh_token"],
 			response_types: ["code"],
 			token_endpoint_auth_method: "none",
-			client_name: "senpi",
+			client_name: "omopi",
 			scope: this.#options.scopes?.join(" "),
 		};
 	}
