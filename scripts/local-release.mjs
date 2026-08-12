@@ -19,7 +19,7 @@ const packages = [
 	{ directory: "packages/senpi-codemode", name: "@code-yeongyu/senpi-codemode" },
 	{ directory: "packages/coding-agent", name: "@code-yeongyu/senpi" },
 ];
-const packageCliCommand = "senpi";
+const packageCliCommand = "omopi";
 function printUsage() {
 	console.log(`Usage: node scripts/local-release.mjs [options]
 

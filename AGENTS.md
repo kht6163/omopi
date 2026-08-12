@@ -11,7 +11,7 @@ Metadata above records the source state used for this generation pass.
 | Field | Value |
 |---|---|
 | Product name | **omopi** |
-| CLI | `omopi` (aliases: `omo`, `pi`, `senpi`) |
+| CLI | `omopi` |
 | Config dir | **`.omopi`** → agent state at `~/.omopi/agent/` |
 | Env prefix | `OMOPI_*` (e.g. `OMOPI_CODING_AGENT_DIR`) |
 | npm package name (engine) | still `@code-yeongyu/senpi` (workspace lockstep with upstream) |

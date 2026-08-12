@@ -19,7 +19,9 @@ describe("create-root-senpi-wrapper", () => {
 		// Then
 		assert.equal(shouldWriteGlobalShim(root, {}), false);
 		assert.equal(result.globalShimWritten, false);
-		assert.equal(wrapper.includes("packages/coding-agent/dist/senpi"), true);
+		assert.equal(result.wrapperPath.endsWith("/omopi") || result.wrapperPath.endsWith("\\omopi"), true);
+		assert.equal(wrapper.includes("packages/coding-agent/dist/cli.js"), true);
+		assert.equal(wrapper.includes("packages/coding-agent/dist/senpi"), false);
 		assert.equal(wrapper.includes("scripts/build-all.mjs"), false);
 		assert.equal(wrapper.includes("packages/ai/src"), false);
 		assert.equal(wrapper.includes(".senpi-build-head"), false);
@@ -61,14 +63,21 @@ describe("create-root-senpi-wrapper", () => {
 		mkdirSync(join(root, ".git"));
 		mkdirSync(globalBin);
 		writeFileSync(linkedTarget, "original", "utf8");
-		symlinkSync(linkedTarget, join(globalBin, "senpi"));
+		symlinkSync(linkedTarget, join(globalBin, "omopi"));
+		writeFileSync(join(globalBin, "senpi"), "foreign-senpi", "utf8");
+		writeFileSync(join(globalBin, "pi"), "foreign-pi", "utf8");
+		writeFileSync(join(globalBin, "omo"), "foreign-omo", "utf8");
 
 		// When
 		const result = createRootSenpiWrapper({ root, globalPrefix, writeGlobalShim: true });
 
 		// Then
 		assert.equal(readFileSync(linkedTarget, "utf8"), "original");
+		assert.equal(result.globalShimPath, join(globalBin, "omopi"));
 		assert.equal(lstatSync(result.globalShimPath).isSymbolicLink(), false);
 		assert.equal(readFileSync(result.globalShimPath, "utf8").includes(result.wrapperPath), true);
+		assert.equal(readFileSync(join(globalBin, "senpi"), "utf8"), "foreign-senpi");
+		assert.equal(readFileSync(join(globalBin, "pi"), "utf8"), "foreign-pi");
+		assert.equal(readFileSync(join(globalBin, "omo"), "utf8"), "foreign-omo");
 	});
 });

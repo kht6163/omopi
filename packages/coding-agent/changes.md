@@ -1,5 +1,36 @@
 # Local fork changes
 
+## 2026-08-13 — omopi is the only installable CLI name
+
+### What changed
+
+- `packages/coding-agent/package.json` `bin` now contains only `omopi`.
+- Root `package.json` declares `bin.omopi` so `npm link` from the monorepo
+  root registers that command. It does not register `omo`, `pi`, or `senpi`.
+- The root build wrapper writes `dist/omopi` and, when opted in, a global
+  `omopi` shim. It no longer writes or replaces a global `senpi`/`pi`/`omo`.
+- Local release smoke now looks for the `omopi` bin in isolated installs.
+- Root `overrides` pin patched transitive versions for the current npm audit
+  findings, and `allowScripts` records npm 12 install-script approvals.
+
+### Why this lives in the fork
+
+- This tree is a personal omopi fork. `pi` belongs to pi-mono, `senpi` to
+  upstream senpi, and `omo` is not this product's command. Publishing or
+  linking those names would collide with tools the operator already owns.
+
+### Why this cannot be expressed externally
+
+- npm `bin` maps and the root link wrapper are package metadata and build
+  output. An extension cannot change which names `npm link` installs.
+
+### Expected merge conflict zones
+
+- `packages/coding-agent/package.json` `bin`
+- Root `package.json` `bin`, `overrides`, and `allowScripts`
+- `scripts/create-root-senpi-wrapper.mjs` and its test
+- `scripts/local-release.mjs` `packageCliCommand`
+
 ## 2026-08-12 — Distinguish external-editor launch failures
 
 ### What changed

@@ -44,8 +44,8 @@ structures are asserted by tests; prose-only rewording can still break them.
 Docs mix `senpi` and upstream `Pi` branding in legacy text. Don't do broad rebrand sweeps
 during focused edits; update only the immediate context you're working in.
 
-Consistent names: CLI binary is `senpi`, config directory is `.senpi`, npm package is
-`@code-yeongyu/senpi`. Don't use `codex`, `pi`, or `openai-codex` in new prose.
+Consistent names: CLI binary is `omopi`, config directory is `.omopi`, npm package is
+`@code-yeongyu/senpi`. Do not document `omo`, `pi`, or `senpi` as installable commands.
 
 ## Security rules
 

@@ -10,7 +10,7 @@
 
 ### Added
 
-- Product/CLI rename to **omopi**. Global bin is `omopi` (with `omo` kept as a short alias alongside `pi` / `senpi`).
+- Product/CLI rename to **omopi**. The only installable command is `omopi`.
 - Config directory is **`.omopi`** (`~/.omopi/agent/`). First launch migrates from `~/.senpi/agent` and `~/.pi/agent` when present.
 - App identity strings (help, system prompt `APP_NAME`, wire originator default, MCP OAuth client name) use **omopi**.
 - `models.json` supports per-model `api` / `baseUrl` in `modelOverrides`, plus provider-level `modelRoutes` (regex id patterns) for manual wire overrides.
@@ -18,6 +18,8 @@
 - Session-title generation sends `reasoning: "low"` when the model advertises reasoning, avoiding gateway errors that require thinking/adaptive for short title calls.
 
 ### Changed
+
+- Install and `npm link` expose only the `omopi` command. `omo`, `pi`, and `senpi` are not registered as bins so they stay with their own tools.
 
 ### Removed
 
