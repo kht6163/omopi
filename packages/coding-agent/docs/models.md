@@ -441,7 +441,28 @@ Use `modelOverrides` to customize built-in models and matching extension-registe
 }
 ```
 
-`modelOverrides` supports these fields per model: `name`, `reasoning`, `thinkingLevelMap`, `input`, `cost` (partial), `contextWindow`, `maxTokens`, `headers`, `recoverTextToolCalls`, `compat`.
+`modelOverrides` supports these fields per model: `name`, `api`, `baseUrl`, `reasoning`, `thinkingLevelMap`, `input`, `cost` (partial), `contextWindow`, `maxTokens`, `headers`, `recoverTextToolCalls`, `compat`.
+
+Use `api` / `baseUrl` when an extension-registered catalog (for example CLIProxyAPI) exposes mixed model families over one provider id but Claude should talk Anthropic Messages while GPT stays on Codex/Responses:
+
+```json
+{
+  "providers": {
+    "cliproxyapi": {
+      "modelRoutes": [
+        {
+          "idPattern": "^claude-",
+          "api": "anthropic-messages",
+          "baseUrl": "http://127.0.0.1:8317",
+          "compat": { "forceAdaptiveThinking": true }
+        }
+      ]
+    }
+  }
+}
+```
+
+`modelRoutes` is pattern-based (first match wins) so dynamic catalogs do not need a per-id override for every Claude model. `stripBackendApi: true` can rewrite a Codex-style `.../backend-api` base URL to the proxy root instead of hardcoding `baseUrl`.
 
 Direct OpenAI GPT-5.6 Sol, Terra, and Luna default to a `272000` context window so requests remain within OpenAI's short-context pricing tier. To opt into OpenAI's 1.05M context window, increase it for each model you use:
 

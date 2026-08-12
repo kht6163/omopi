@@ -121,12 +121,20 @@ function mergeCompat(
 	return merged;
 }
 
+function stripBackendApiBaseUrl(baseUrl: string): string {
+	const trimmed = baseUrl.replace(/\/+$/, "");
+	const stripped = trimmed.replace(/\/backend-api$/i, "");
+	return stripped.length > 0 ? stripped : baseUrl;
+}
+
 function applyModelOverride(model: Model<Api>, override: ModelsJsonModelOverride): ModelWithConfigMetadata {
 	return {
 		...model,
 		name: override.name ?? model.name,
 		promptPreset: override.promptPreset ?? (model as Model<Api> & { promptPreset?: string }).promptPreset,
 		recoverTextToolCalls: override.recoverTextToolCalls ?? model.recoverTextToolCalls,
+		api: (override.api as Api | undefined) ?? model.api,
+		baseUrl: override.baseUrl ?? model.baseUrl,
 		reasoning: override.reasoning ?? model.reasoning,
 		thinkingLevelMap: override.thinkingLevelMap
 			? override.thinkingLevelMapMode === "replace"
@@ -148,6 +156,35 @@ function applyModelOverride(model: Model<Api>, override: ModelsJsonModelOverride
 		cacheRetention: override.cacheRetention ?? model.cacheRetention,
 		compat: mergeCompat(model.compat, override.compat),
 	};
+}
+
+type ModelsJsonModelRoute = NonNullable<ModelsJsonProvider["modelRoutes"]>[number];
+
+function applyModelRoutes(model: Model<Api>, routes: readonly ModelsJsonModelRoute[] | undefined): Model<Api> {
+	if (!routes || routes.length === 0) return model;
+	for (const route of routes) {
+		let re: RegExp;
+		try {
+			re = new RegExp(route.idPattern, "i");
+		} catch {
+			continue;
+		}
+		if (!re.test(model.id) && !(model.name && re.test(model.name))) {
+			continue;
+		}
+		const baseUrl = route.baseUrl
+			? route.baseUrl
+			: route.stripBackendApi
+				? stripBackendApiBaseUrl(model.baseUrl)
+				: model.baseUrl;
+		return {
+			...model,
+			api: (route.api as Api | undefined) ?? model.api,
+			baseUrl,
+			compat: mergeCompat(model.compat, route.compat),
+		};
+	}
+	return model;
 }
 
 function modelFromJson(
@@ -200,6 +237,7 @@ function applyModelsJson(
 		throw new Error(`Provider ${providerId}: "baseUrl" is required when "oauth" is set.`);
 	}
 	const hasOverrides = config.modelOverrides && Object.keys(config.modelOverrides).length > 0;
+	const hasRoutes = Boolean(config.modelRoutes && config.modelRoutes.length > 0);
 	if (
 		!config.models?.length &&
 		!config.baseUrl &&
@@ -207,6 +245,7 @@ function applyModelsJson(
 		!config.extraBody &&
 		!config.compat &&
 		!hasOverrides &&
+		!hasRoutes &&
 		!config.whitelist &&
 		!config.blacklist &&
 		!config.apiKey &&
@@ -214,7 +253,7 @@ function applyModelsJson(
 		config.authHeader === undefined
 	) {
 		throw new Error(
-			`Provider ${providerId}: must specify "baseUrl", "headers", "extraBody", "compat", "modelOverrides", or "models".`,
+			`Provider ${providerId}: must specify "baseUrl", "headers", "extraBody", "compat", "modelOverrides", "modelRoutes", or "models".`,
 		);
 	}
 
@@ -377,8 +416,8 @@ export function composeModelProvider(
 	let refreshedExtensionModels: ProviderConfigInput["models"];
 	const currentExtension = (): ProviderConfigInput | undefined =>
 		extension && refreshedExtensionModels ? { ...extension, models: refreshedExtensionModels } : extension;
-	// models.json modelOverrides are the topmost user-config layer: they apply once,
-	// after custom-model upserts, extension model replacement, and legacy OAuth projection.
+	// models.json modelOverrides / modelRoutes are the topmost user-config layer: they apply
+	// once, after custom-model upserts, extension model replacement, and legacy OAuth projection.
 	const getModels = () => {
 		let models = applyExtension(
 			providerId,
@@ -389,8 +428,9 @@ export function composeModelProvider(
 			models = extension.oauth.modifyModels(models, extensionOAuthCredential);
 		}
 		return models.map((model) => {
-			const override = config?.modelOverrides?.[model.id];
-			return override ? applyModelOverride(model, override) : model;
+			const routed = applyModelRoutes(model, config?.modelRoutes);
+			const override = config?.modelOverrides?.[routed.id];
+			return override ? applyModelOverride(routed, override) : routed;
 		});
 	};
 	// Validate eagerly so registration/reload reports structural errors immediately.

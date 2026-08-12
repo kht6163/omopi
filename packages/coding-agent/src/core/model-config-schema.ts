@@ -177,6 +177,10 @@ const ModelOverrideSchema = Type.Object({
 	name: Type.Optional(Type.String({ minLength: 1 })),
 	promptPreset: Type.Optional(Type.String({ minLength: 1 })),
 	recoverTextToolCalls: Type.Optional(Type.Boolean()),
+	/** Override the wire API for this model (e.g. anthropic-messages). */
+	api: Type.Optional(Type.String({ minLength: 1 })),
+	/** Override the request base URL for this model. */
+	baseUrl: Type.Optional(Type.String({ minLength: 1 })),
 	reasoning: Type.Optional(Type.Boolean()),
 	thinkingLevelMap: Type.Optional(ThinkingLevelMapSchema),
 	thinkingLevelMapMode: Type.Optional(Type.Union([Type.Literal("merge"), Type.Literal("replace")])),
@@ -198,6 +202,24 @@ const ModelOverrideSchema = Type.Object({
 	compat: Type.Optional(ProviderCompatSchema),
 });
 
+/**
+ * Pattern-based routing for extension-registered catalogs (e.g. cliproxyapi) so
+ * Claude ids can use anthropic-messages without forking the extension package.
+ * First matching rule wins.
+ */
+const ModelRouteSchema = Type.Object({
+	/** Regex matched against model.id (and model.name as fallback). */
+	idPattern: Type.String({ minLength: 1 }),
+	api: Type.Optional(Type.String({ minLength: 1 })),
+	baseUrl: Type.Optional(Type.String({ minLength: 1 })),
+	/**
+	 * When true, rewrite a Codex-style `.../backend-api` base URL to the proxy root
+	 * so Anthropic Messages clients hit `/v1/messages` on the same host.
+	 */
+	stripBackendApi: Type.Optional(Type.Boolean()),
+	compat: Type.Optional(ProviderCompatSchema),
+});
+
 const ProviderConfigSchema = Type.Object({
 	name: Type.Optional(Type.String({ minLength: 1 })),
 	disabled: Type.Optional(Type.Boolean()),
@@ -214,6 +236,7 @@ const ProviderConfigSchema = Type.Object({
 	blacklist: Type.Optional(Type.Array(Type.String({ minLength: 1 }))),
 	models: Type.Optional(Type.Array(ModelDefinitionSchema)),
 	modelOverrides: Type.Optional(Type.Record(Type.String(), ModelOverrideSchema)),
+	modelRoutes: Type.Optional(Type.Array(ModelRouteSchema)),
 });
 
 const ModelsConfigSchema = Type.Object({

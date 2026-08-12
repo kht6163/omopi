@@ -119,11 +119,15 @@ function buildTitleContext(firstPrompt: string): Context {
 }
 
 function buildTitleOptions(options: GenerateSessionTitleOptions): SimpleStreamOptions {
+	// Title generation is short and cosmetic. Prefer a low thinking level when the
+	// model advertises reasoning so gateways that require thinking/adaptive
+	// (e.g. CLIProxyAPI + Claude) do not fail with clear_thinking strategy errors.
 	const titleOptions: SimpleStreamOptions = {
 		...options.baseOptions,
 		sessionId: options.sessionId,
 		cacheRetention: options.model.cacheRetention === "none" ? "none" : "short",
 		maxTokens: 64,
+		reasoning: options.baseOptions?.reasoning ?? (options.model.reasoning ? "low" : undefined),
 	};
 	if (options.auth.apiKey !== undefined) {
 		titleOptions.apiKey = options.auth.apiKey;
