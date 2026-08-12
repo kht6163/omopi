@@ -13,7 +13,8 @@
 - Product/CLI rename to **omopi**. Global bin is `omopi` (with `omo` kept as a short alias alongside `pi` / `senpi`).
 - Config directory is **`.omopi`** (`~/.omopi/agent/`). First launch migrates from `~/.senpi/agent` and `~/.pi/agent` when present.
 - App identity strings (help, system prompt `APP_NAME`, wire originator default, MCP OAuth client name) use **omopi**.
-- `models.json` supports per-model `api` / `baseUrl` in `modelOverrides`, plus provider-level `modelRoutes` (regex id patterns) so extension catalogs such as CLIProxyAPI can send Claude over `anthropic-messages` without forking the extension package.
+- `models.json` supports per-model `api` / `baseUrl` in `modelOverrides`, plus provider-level `modelRoutes` (regex id patterns) for manual wire overrides.
+- **Built-in CLIProxyAPI Claude routing:** when a model is registered under `cliproxyapi-codex-responses` (or provider ids `cliproxyapi` / `cpa-responses`) and its id matches `claude-*`, omopi automatically rewrites it to `anthropic-messages` and strips `/backend-api` from the base URL. No models.json and no fork of `@router-for-me/pi-cliproxyapi-provider` is required. User `modelRoutes` / `modelOverrides` still override the default.
 - Session-title generation sends `reasoning: "low"` when the model advertises reasoning, avoiding gateway errors that require thinking/adaptive for short title calls.
 
 ### Changed

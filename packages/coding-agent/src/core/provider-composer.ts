@@ -22,6 +22,7 @@ import {
 	transformContext,
 	wrapStreamWithToolCallMiddleware,
 } from "@earendil-works/pi-ai";
+import { applyBuiltinGatewayRoutes } from "./gateway-model-routes.ts";
 import type { ModelConfig, ModelsJsonModel, ModelsJsonModelOverride, ModelsJsonProvider } from "./model-config.ts";
 import { composeApiKeyAuth, configuredApiKey, configuredHeaders, withConfiguredAuth } from "./provider-api-key-auth.ts";
 import { configuredHeaderAuthStatus, type HeaderAuthStatusSource } from "./provider-header-auth.ts";
@@ -416,8 +417,8 @@ export function composeModelProvider(
 	let refreshedExtensionModels: ProviderConfigInput["models"];
 	const currentExtension = (): ProviderConfigInput | undefined =>
 		extension && refreshedExtensionModels ? { ...extension, models: refreshedExtensionModels } : extension;
-	// models.json modelOverrides / modelRoutes are the topmost user-config layer: they apply
-	// once, after custom-model upserts, extension model replacement, and legacy OAuth projection.
+	// Order: extension/builtin catalog → omopi gateway defaults (CLIProxy Claude→Anthropic)
+	// → user modelRoutes → user modelOverrides (highest precedence).
 	const getModels = () => {
 		let models = applyExtension(
 			providerId,
@@ -428,7 +429,8 @@ export function composeModelProvider(
 			models = extension.oauth.modifyModels(models, extensionOAuthCredential);
 		}
 		return models.map((model) => {
-			const routed = applyModelRoutes(model, config?.modelRoutes);
+			const gatewayDefault = applyBuiltinGatewayRoutes(model, providerId);
+			const routed = applyModelRoutes(gatewayDefault, config?.modelRoutes);
 			const override = config?.modelOverrides?.[routed.id];
 			return override ? applyModelOverride(routed, override) : routed;
 		});

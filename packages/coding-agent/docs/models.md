@@ -443,7 +443,11 @@ Use `modelOverrides` to customize built-in models and matching extension-registe
 
 `modelOverrides` supports these fields per model: `name`, `api`, `baseUrl`, `reasoning`, `thinkingLevelMap`, `input`, `cost` (partial), `contextWindow`, `maxTokens`, `headers`, `recoverTextToolCalls`, `compat`.
 
-Use `api` / `baseUrl` when an extension-registered catalog (for example CLIProxyAPI) exposes mixed model families over one provider id but Claude should talk Anthropic Messages while GPT stays on Codex/Responses:
+### CLIProxyAPI Claude routing (built-in)
+
+`@router-for-me/pi-cliproxyapi-provider` registers every catalog model under the Codex/Responses wire (`cliproxyapi-codex-responses`). omopi automatically rewrites **Claude** entries to `anthropic-messages` and points the base URL at the proxy root (strips trailing `/backend-api`) so `/v1/messages` is used. GPT and other families stay on Codex. This is automatic for all users — you do not need `models.json` for the default behavior.
+
+Optional overrides still work when you need a different policy:
 
 ```json
 {
@@ -453,8 +457,7 @@ Use `api` / `baseUrl` when an extension-registered catalog (for example CLIProxy
         {
           "idPattern": "^claude-",
           "api": "anthropic-messages",
-          "baseUrl": "http://127.0.0.1:8317",
-          "compat": { "forceAdaptiveThinking": true }
+          "stripBackendApi": true
         }
       ]
     }
@@ -462,7 +465,7 @@ Use `api` / `baseUrl` when an extension-registered catalog (for example CLIProxy
 }
 ```
 
-`modelRoutes` is pattern-based (first match wins) so dynamic catalogs do not need a per-id override for every Claude model. `stripBackendApi: true` can rewrite a Codex-style `.../backend-api` base URL to the proxy root instead of hardcoding `baseUrl`.
+`modelRoutes` is pattern-based (first match wins). User routes and `modelOverrides` apply **after** the built-in gateway default.
 
 Direct OpenAI GPT-5.6 Sol, Terra, and Luna default to a `272000` context window so requests remain within OpenAI's short-context pricing tier. To opt into OpenAI's 1.05M context window, increase it for each model you use:
 
