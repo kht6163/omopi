@@ -381,24 +381,26 @@ export class Theme {
 		return `${ansi}${text}\x1b[49m`; // Reset only background color
 	}
 
+	// Prefer raw SGR over chalk so styles still apply when chalk.level is 0
+	// (non-TTY tests, piped output). Color tokens already bypass chalk.
 	bold(text: string): string {
-		return chalk.bold(text);
+		return `\x1b[1m${text}\x1b[22m`;
 	}
 
 	italic(text: string): string {
-		return chalk.italic(text);
+		return `\x1b[3m${text}\x1b[23m`;
 	}
 
 	underline(text: string): string {
-		return chalk.underline(text);
+		return `\x1b[4m${text}\x1b[24m`;
 	}
 
 	inverse(text: string): string {
-		return chalk.inverse(text);
+		return `\x1b[7m${text}\x1b[27m`;
 	}
 
 	strikethrough(text: string): string {
-		return chalk.strikethrough(text);
+		return `\x1b[9m${text}\x1b[29m`;
 	}
 
 	getFgAnsi(color: ThemeColor): string {

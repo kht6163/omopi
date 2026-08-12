@@ -264,10 +264,12 @@ describe("classic chrome characterization", () => {
 		);
 		try {
 			const rendered = component.render(80).join("\n");
+			// Tool title is theme.fg(toolTitle, theme.bold(name)) — bold SGR is nested inside the color span.
+			const title = fg("212;212;212", `\x1b[1mclassic_characterization\x1b[22m`);
 			const expected = [
 				"",
 				bg("40;40;50", line("", 80)),
-				bg("40;40;50", line(` ${fg("212;212;212", "classic_characterization")}`, 80)),
+				bg("40;40;50", line(` ${title}`, 80)),
 				bg("40;40;50", line("", 80)),
 				bg("40;40;50", line(" {", 80)),
 				bg("40;40;50", line('   "value": "x"', 80)),

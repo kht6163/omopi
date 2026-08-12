@@ -79,23 +79,22 @@ export function createAssistantRenderDescriptors(
 				}
 				i--;
 				if (thinkingBlocks.length === 0) break;
-				if (!hasTiming) {
-					const text = options.hideThinkingBlock
-						? theme.italic(theme.fg("thinkingText", options.hiddenThinkingLabel))
-						: thinkingBlocks.join("\n\n");
-					descriptors.push({ kind: options.hideThinkingBlock ? "thinking-label" : "thinking-md", text });
+				// Always show a dim label so thinking is never mistaken for the answer.
+				const label = !hasTiming
+					? options.hideThinkingBlock
+						? options.hiddenThinkingLabel
+						: "Thought"
+					: isDone
+						? `Thought: ${formatDuration(Math.max(0, maxEnd - minStart))}`
+						: options.hiddenThinkingLabel;
+				const styledLabel = theme.italic(theme.fg("thinkingText", label));
+				if (options.hideThinkingBlock) {
+					descriptors.push({ kind: "thinking-label", text: styledLabel });
 				} else {
-					const label = isDone
-						? theme.italic(theme.fg("thinkingText", `Thought: ${formatDuration(Math.max(0, maxEnd - minStart))}`))
-						: theme.italic(theme.fg("thinkingText", options.hiddenThinkingLabel));
-					if (options.hideThinkingBlock) {
-						descriptors.push({ kind: "thinking-label", text: label });
-					} else {
-						descriptors.push(
-							{ kind: "thinking-label", text: label },
-							{ kind: "thinking-md", text: thinkingBlocks.join("\n\n") },
-						);
-					}
+					descriptors.push(
+						{ kind: "thinking-label", text: styledLabel },
+						{ kind: "thinking-md", text: thinkingBlocks.join("\n\n") },
+					);
 				}
 				if (message.content.slice(i + 1).some((following) => isVisibleContent(following, false)))
 					descriptors.push(SPACER_DESCRIPTOR);

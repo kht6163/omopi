@@ -1,10 +1,11 @@
 import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { type Component, Container, Markdown, type MarkdownTheme, Spacer, Text } from "@earendil-works/pi-tui";
 import type { MarkdownTransformer } from "../../../core/extensions/types.ts";
-import { getMarkdownTheme, theme } from "../theme/theme.ts";
+import { getMarkdownTheme } from "../theme/theme.ts";
 import { type AssistantRenderDescriptor, createAssistantRenderDescriptors } from "./assistant-render-descriptors.ts";
 import { createMarkdownTransform } from "./markdown-transform.ts";
 import { createBoundedRenderSignature } from "./render-signature.ts";
+import { ThinkingBodyComponent } from "./thinking-body.ts";
 
 const OSC133_ZONE_START = "\x1b]133;A\x07";
 const OSC133_ZONE_END = "\x1b]133;B\x07";
@@ -132,7 +133,9 @@ export class AssistantMessageComponent extends Container {
 			const child = this.contentContainer.children[divergentIndex];
 			if (!previous || !next || !child || previous.kind !== next.kind) break;
 			if (previous.text !== next.text) {
-				if ((next.kind === "text-md" || next.kind === "thinking-md") && child instanceof Markdown) {
+				if (next.kind === "text-md" && child instanceof Markdown) {
+					child.setText(next.text);
+				} else if (next.kind === "thinking-md" && child instanceof ThinkingBodyComponent) {
 					child.setText(next.text);
 				} else break;
 			}
@@ -153,18 +156,12 @@ export class AssistantMessageComponent extends Container {
 					transform: createMarkdownTransform("assistant", this.isStreaming, this.markdownTransformers),
 				});
 			case "thinking-md":
-				return new Markdown(
+				return new ThinkingBodyComponent(
 					descriptor.text,
 					this.outputPad,
-					0,
 					this.markdownTheme,
-					{
-						color: (text: string) => theme.fg("thinkingText", text),
-						italic: true,
-					},
-					{
-						transform: createMarkdownTransform("assistant-thinking", this.isStreaming, this.markdownTransformers),
-					},
+					this.isStreaming,
+					this.markdownTransformers,
 				);
 			case "thinking-label":
 			case "error-text":

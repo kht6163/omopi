@@ -313,6 +313,7 @@ describe("AssistantMessageComponent", () => {
 		expect(rendered.split("\n").some((line) => line.trim() === "Thought: 3.2s")).toBe(true);
 		expect(headerIndex).toBeGreaterThanOrEqual(0);
 		expect(bodyIndex).toBeGreaterThan(headerIndex);
+		expect(rendered).toContain("│ visible Markdown body");
 	});
 
 	test("renders a finished Thought duration in place of the hidden label", () => {
@@ -345,16 +346,18 @@ describe("AssistantMessageComponent", () => {
 		expect(rendered).not.toContain("Thought:");
 	});
 
-	test("keeps legacy no Thought runs unchanged", () => {
+	test("shows Thought label and quote border for untimed thinking runs", () => {
 		initTheme("dark");
 
 		const message = createAssistantMessage([{ type: "thinking", thinking: "legacy body" }]);
 		const visible = stripAnsi(new AssistantMessageComponent(message).render(80).join("\n"));
 		const hidden = stripAnsi(new AssistantMessageComponent(message, true).render(80).join("\n"));
 
-		expect(visible).toBe(`\n legacy body${" ".repeat(68)}`);
+		expect(visible.split("\n").some((line) => line.trim() === "Thought")).toBe(true);
+		expect(visible).toContain("│ legacy body");
 		expect(visible).not.toContain("Thought:");
-		expect(hidden).toBe(`\n Thinking...${" ".repeat(68)}`);
+		expect(hidden.split("\n").some((line) => line.trim() === "Thinking...")).toBe(true);
+		expect(hidden).not.toContain("legacy body");
 		expect(hidden).not.toContain("Thought:");
 	});
 
@@ -426,12 +429,13 @@ describe("AssistantMessageComponent", () => {
 		const lines = component.render(80).map((line) => stripAnsi(line));
 
 		expect(lines.some((line) => line.includes(" hello"))).toBe(true);
-		expect(lines.some((line) => line.includes(" reasoning"))).toBe(true);
+		// Thinking body is pad + "│ " + content
+		expect(lines.some((line) => line.includes(" │ reasoning"))).toBe(true);
 
 		component.setOutputPad(0);
 		const updatedLines = component.render(80).map((line) => stripAnsi(line));
 		expect(updatedLines.some((line) => line.startsWith("hello"))).toBe(true);
-		expect(updatedLines.some((line) => line.startsWith("reasoning"))).toBe(true);
+		expect(updatedLines.some((line) => line.startsWith("│ reasoning"))).toBe(true);
 	});
 
 	test("chains Markdown transformers in registration order", () => {
