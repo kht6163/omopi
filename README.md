@@ -4,7 +4,7 @@ Personal coding-agent CLI based on **[code-yeongyu/senpi](https://github.com/cod
 
 | | |
 |---|---|
-| **CLI** | `omopi` (aliases: `omo`, `pi`, `senpi`) |
+| **CLI** | `omopi` |
 | **Config** | `~/.omopi/agent/` (migrates from `~/.senpi/agent` and `~/.pi/agent` on first run) |
 | **Repo** | https://github.com/kht6163/omopi |
 
@@ -327,6 +327,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and [AGENTS.m
 ```bash
 npm install --ignore-scripts  # Install all dependencies without running lifecycle scripts
 npm run build        # Build all packages
+npm link             # Register the `omopi` command globally (does not install omo/pi/senpi)
 npm run check        # Lint, format, and type check
 npm test             # Run tests (skips LLM-dependent tests without API keys)
 ./pi-test.sh         # Live-API integration suite (env-gated; requires API keys)
@@ -346,6 +347,7 @@ We treat npm dependency changes as reviewed code changes.
 - Local release installs, documented npm installs, and `senpi update senpi` use `--ignore-scripts` where supported.
 - CI installs with `npm ci --ignore-scripts`, and a scheduled GitHub workflow runs `npm audit --omit=dev` plus `npm audit signatures --omit=dev`.
 - Shrinkwrap generation has an explicit allowlist for dependency lifecycle scripts; new lifecycle-script deps fail checks until reviewed.
+- Root `package.json` `allowScripts` is the npm 12 install-script allowlist. Approve only reviewed packages; deny native addons that this tree does not need (`ssh2`, `cpu-features`).
 
 ## Contributing
 

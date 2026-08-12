@@ -58,7 +58,7 @@ src/changes.md                     Root fork-change record
 - Use `pi.registerTool()`, `pi.registerCommand()`, and `pi.registerFlag()` before adding core surfaces.
 - Keybindings are configurable through `KEYBINDINGS`; never match hardcoded key literals.
 - Public extension API changes require the nearest `changes.md` entry. Read `docs/extensions.md` before claiming a hook is missing.
-- Keep branding consistent: package `@code-yeongyu/senpi`, binary `senpi`, config directory `.senpi`.
+- Keep branding consistent: package `@code-yeongyu/senpi`, binary `omopi`, config directory `.omopi`. Do not expose `omo`, `pi`, or `senpi` as installable CLI names.
 - Preserve the inlined UUIDv7 implementation; do not add a `uuid` dependency.
 - Do not run real providers in tests. Use `test/suite/harness.ts` and the faux provider.
 - RPC/app-server streams are LF-framed and request-correlated; preserve pending-work rejection on disconnect or child exit. Inbound NDJSON readers are not size-bounded; outbound stdio waits for stdout backpressure (`transports/stdio.ts`) and WebSocket closes slow clients at queue cap (`transports/websocket-connection-handler.ts`); preserve those contracts.

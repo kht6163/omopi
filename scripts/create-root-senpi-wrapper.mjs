@@ -36,9 +36,9 @@ function run(command, args, options = {}) {
 	}
 }
 
-const cliPath = join(root, "packages/coding-agent/dist/senpi");
+const cliPath = join(root, "packages/coding-agent/dist/cli.js");
 if (!existsSync(cliPath)) {
-	console.error("senpi build output is missing. Run npm run build from the repo root.");
+	console.error("omopi build output is missing. Run npm run build from the repo root.");
 	process.exit(1);
 }
 
@@ -52,11 +52,12 @@ export function createRootSenpiWrapper({
 	writeGlobalShim = shouldWriteGlobalShim(root),
 } = {}) {
 	const distDir = join(root, "dist");
-	const wrapperPath = join(distDir, "senpi");
+	const wrapperPath = join(distDir, "omopi");
+	const wrapperSource = linkedWrapperScript();
 
 	mkdirSync(distDir, { recursive: true });
 	rmSync(join(distDir, ".senpi-build-head"), { force: true });
-	writeFileSync(wrapperPath, linkedWrapperScript(), "utf8");
+	writeFileSync(wrapperPath, wrapperSource, "utf8");
 	chmodSync(wrapperPath, 0o755);
 
 	if (!writeGlobalShim) {
@@ -65,7 +66,7 @@ export function createRootSenpiWrapper({
 
 	const resolvedGlobalPrefix = globalPrefix ?? execFileSync("npm", ["prefix", "-g"], { encoding: "utf8" }).trim();
 	const globalBinDir = join(resolvedGlobalPrefix, "bin");
-	const globalShimPath = join(globalBinDir, "senpi");
+	const globalShimPath = join(globalBinDir, "omopi");
 
 	mkdirSync(globalBinDir, { recursive: true });
 	if (existsSync(globalShimPath)) {

@@ -58,10 +58,7 @@
 				"@mariozechner/clipboard": "0.3.9"
 			},
 			"bin": {
-				"omopi": "dist/cli.js",
-				"omo": "dist/cli.js",
-				"pi": "dist/cli.js",
-				"senpi": "dist/cli.js"
+				"omopi": "dist/cli.js"
 			},
 			"engines": {
 				"node": ">=24.0.0"
@@ -189,8 +186,7 @@
 			},
 			"bin": {
 				"anthropic-ai-sdk": "bin/cli"
-			},
-			"peer": true
+			}
 		},
 		"node_modules/@asamuzakjp/css-color": {
 			"version": "5.1.11",
@@ -843,8 +839,7 @@
 					"type": "opencollective",
 					"url": "https://opencollective.com/csstools"
 				}
-			],
-			"peer": true
+			]
 		},
 		"node_modules/@csstools/css-syntax-patches-for-csstree": {
 			"version": "1.1.5",
@@ -887,8 +882,7 @@
 					"type": "opencollective",
 					"url": "https://opencollective.com/csstools"
 				}
-			],
-			"peer": true
+			]
 		},
 		"node_modules/@earendil-works/pi-agent-core": {
 			"version": "2026.8.12-5",
@@ -1274,8 +1268,7 @@
 			},
 			"engines": {
 				"node": ">=18"
-			},
-			"peer": true
+			}
 		},
 		"node_modules/@mozilla/readability": {
 			"version": "0.6.0",
@@ -1293,8 +1286,7 @@
 			"license": "Apache-2.0",
 			"engines": {
 				"node": ">=8.0.0"
-			},
-			"peer": true
+			}
 		},
 		"node_modules/@opentelemetry/semantic-conventions": {
 			"version": "1.41.1",
@@ -1657,9 +1649,9 @@
 			"license": "MIT"
 		},
 		"node_modules/brace-expansion": {
-			"version": "5.0.8",
-			"resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.8.tgz",
-			"integrity": "sha512-JZyDyq3D4AUifKTPOB7DELf6XsB3WdPuNxCtob1vFXPsSXhdAiHBWJ/tJ8HAc9aH84BK+5JFZLNkJKx3G9kzQg==",
+			"version": "5.0.9",
+			"resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.9.tgz",
+			"integrity": "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==",
 			"license": "MIT",
 			"dependencies": {
 				"balanced-match": "^4.0.2"
@@ -2028,8 +2020,7 @@
 			"funding": {
 				"type": "opencollective",
 				"url": "https://opencollective.com/express"
-			},
-			"peer": true
+			}
 		},
 		"node_modules/express-rate-limit": {
 			"version": "8.5.2",
@@ -2062,9 +2053,9 @@
 			"license": "MIT"
 		},
 		"node_modules/fast-uri": {
-			"version": "3.1.4",
-			"resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.4.tgz",
-			"integrity": "sha512-8JnbkQ4juDyvYs4mgFGQqg4yCYtFDtUtmp2QIQq11ZZe5CFQ5wcqm1rqDgAh/QdMySuBnPzMUiJUNZG5N/AiQw==",
+			"version": "3.1.5",
+			"resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.5.tgz",
+			"integrity": "sha512-gHwA1O9LDIcKunMKhObS/HimwtehO1nPUECKAu5TpKgaO19fcWEl4bliWe1jWxVFvIXztJjjQ4L8XQ1EU9f7Jw==",
 			"license": "BSD-3-Clause",
 			"funding": [
 				{
@@ -2332,14 +2323,13 @@
 			}
 		},
 		"node_modules/hono": {
-			"version": "4.12.27",
-			"resolved": "https://registry.npmjs.org/hono/-/hono-4.12.27.tgz",
-			"integrity": "sha512-1yrb/+w6HWQJrUCLkJ2IF5jNIPvvFkblV5RNOYl6bV+OA6p9GLcMpHFFGTosSvHvcAUibuUukRqhlYI4z32C7Q==",
+			"version": "4.12.34",
+			"resolved": "https://registry.npmjs.org/hono/-/hono-4.12.34.tgz",
+			"integrity": "sha512-GqXJqY/xJkJmuloTrnV1ZEXG3fqte+VjkUqoRNZXcrUidiUOP4fMSIHHY4tsqZBK++kVyWmt/AAfSUuy57/eSA==",
 			"license": "MIT",
 			"engines": {
 				"node": ">=16.9.0"
-			},
-			"peer": true
+			}
 		},
 		"node_modules/hosted-git-info": {
 			"version": "10.1.1",
@@ -2443,9 +2433,9 @@
 			"license": "ISC"
 		},
 		"node_modules/ip-address": {
-			"version": "10.2.0",
-			"resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.2.0.tgz",
-			"integrity": "sha512-/+S6j4E9AHvW9SWMSEY9Xfy66O5PWvVEJ08O0y5JGyEKQpojb0K0GKpz/v5HJ/G0vi3D2sjGK78119oXZeE0qA==",
+			"version": "10.5.0",
+			"resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.5.0.tgz",
+			"integrity": "sha512-R5SnVLJmgYYvf2F2ZgwSBnelz5G4q5AxIC277GDfUaNbrZKNANcBC7RHqYYePlszf4kBolVkJauG0ZjHHFh55g==",
 			"license": "MIT",
 			"engines": {
 				"node": ">= 12"
@@ -2534,13 +2524,12 @@
 			},
 			"engines": {
 				"node": "^20.19.0 || ^22.13.0 || >=24.0.0"
-			},
-			"peer": true
+			}
 		},
 		"node_modules/jsdom/node_modules/undici": {
-			"version": "7.28.0",
-			"resolved": "https://registry.npmjs.org/undici/-/undici-7.28.0.tgz",
-			"integrity": "sha512-cRZYrTDwWznlnRiPjggAGxZXanty6M8RV1ff8Wm4LWXBp7/IG8v5DnOm74DtUBp9OONpK75YlPnIjQqX0dBDtA==",
+			"version": "7.29.0",
+			"resolved": "https://registry.npmjs.org/undici/-/undici-7.29.0.tgz",
+			"integrity": "sha512-IDxfleLmmbSskfWSUATiN1nfn2rDuvnMOqb5CWR92iIfojA0Ud+ulOAAEQ57LPr9rWmsreUyf5lwyao+7GNNVw==",
 			"license": "MIT",
 			"engines": {
 				"node": ">=20.18.1"
@@ -3579,8 +3568,7 @@
 			"license": "MIT",
 			"funding": {
 				"url": "https://github.com/sponsors/colinhacks"
-			},
-			"peer": true
+			}
 		},
 		"node_modules/zod-to-json-schema": {
 			"version": "3.25.2",
