@@ -60,6 +60,7 @@
 			"bin": {
 				"senpi": "dist/cli.js",
 				"pi": "dist/cli.js",
+				"omopi": "dist/cli.js",
 				"omo": "dist/cli.js"
 			},
 			"engines": {

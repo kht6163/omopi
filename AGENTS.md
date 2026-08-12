@@ -6,19 +6,22 @@ Branch: `main`
 
 Metadata above records the source state used for this generation pass.
 
-## Fork provenance (omo)
+## Fork provenance (omopi)
 
-This repository (`kht6163/omo`) is a GitHub fork of **[code-yeongyu/senpi](https://github.com/code-yeongyu/senpi)**.
+This repository (`kht6163/omopi`) is a personal GitHub fork of **[code-yeongyu/senpi](https://github.com/code-yeongyu/senpi)**.
+
+Product name: **omopi** (CLI: `omopi`; `omo` kept as a short alias). Config dir remains `.senpi` unless a brand profile overrides it.
 
 | Field | Value |
 |---|---|
 | Upstream | `code-yeongyu/senpi` |
-| Forked package version | **`2026.8.12-4`** (`@code-yeongyu/senpi`) |
+| Product / CLI | **omopi** (`omo` alias, also `pi` / `senpi`) |
+| Forked package version | **`2026.8.12-4`** (`@code-yeongyu/senpi` at fork time) |
 | Upstream commit at fork | `5678c2cd9ff8f4f8e66545fbe64084c56193fd09` |
 | Upstream commit (short) | `5678c2cd9` |
 | Upstream commit date | 2026-08-12 (`fix(images): limit historical transport replay`) |
 | Upstream ref | `main` (tag describe: `v2026.8.12-4-6-g5678c2cd9`) |
-| Local remote names | `origin` → `kht6163/omo`, `upstream` → `code-yeongyu/senpi` |
+| Local remote names | `origin` → `kht6163/omopi`, `upstream` → `code-yeongyu/senpi` |
 
 When rebasing or syncing, compare against that commit/version first, then fetch `upstream/main`.
 

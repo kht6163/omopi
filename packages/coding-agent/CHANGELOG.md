@@ -10,6 +10,8 @@
 
 ### Added
 
+- Product/CLI rename to **omopi**. Global bin is `omopi` (with `omo` kept as a short alias alongside `pi` / `senpi`).
+
 ### Changed
 
 ### Removed
@@ -28,8 +30,8 @@
 
 ### Added
 
-- CLI package now exposes `pi` and `omo` bin aliases alongside `senpi`, so a global
-  `npm link` / install can invoke the agent as `omo`, `pi`, or `senpi`.
+- CLI package now exposes `omopi` / `omo` / `pi` bin aliases alongside `senpi`, so a global
+  `npm link` / install can invoke the agent as `omopi` (preferred), `omo`, `pi`, or `senpi`.
 
 - App-server clients can now receive extension-owned `extension_event` notifications and call loaded-thread
   `extension_request` handlers, bringing both directions of the opt-in `pi.rpc` channel to app/editor integrations
