@@ -177,18 +177,26 @@ export function compareVersions(v1: ChangelogEntry, v2: ChangelogEntry): number 
 }
 
 /**
+ * Parse a version string into changelog components.
+ * Accepts calver / semver with optional pre-release or build suffix, e.g.
+ * `2026.8.12-4`, `v0.52.1`, `1.2.3-beta.1` — only the leading `major.minor.patch`
+ * is used for comparison (matches ## [x.y.z] headers in CHANGELOG.md).
+ */
+export function parseVersionString(version: string): ChangelogEntry {
+	const match = version.trim().match(/^v?(\d+)\.(\d+)\.(\d+)/);
+	return {
+		major: match ? Number.parseInt(match[1]!, 10) : 0,
+		minor: match ? Number.parseInt(match[2]!, 10) : 0,
+		patch: match ? Number.parseInt(match[3]!, 10) : 0,
+		content: "",
+	};
+}
+
+/**
  * Get entries newer than lastVersion
  */
 export function getNewEntries(entries: ChangelogEntry[], lastVersion: string): ChangelogEntry[] {
-	// Parse lastVersion
-	const parts = lastVersion.split(".").map(Number);
-	const last: ChangelogEntry = {
-		major: parts[0] || 0,
-		minor: parts[1] || 0,
-		patch: parts[2] || 0,
-		content: "",
-	};
-
+	const last = parseVersionString(lastVersion);
 	return entries.filter((entry) => compareVersions(entry, last) > 0);
 }
 

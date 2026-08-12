@@ -6,6 +6,22 @@ Branch: `main`
 
 Metadata above records the source state used for this generation pass.
 
+## Fork provenance (omo)
+
+This repository (`kht6163/omo`) is a GitHub fork of **[code-yeongyu/senpi](https://github.com/code-yeongyu/senpi)**.
+
+| Field | Value |
+|---|---|
+| Upstream | `code-yeongyu/senpi` |
+| Forked package version | **`2026.8.12-4`** (`@code-yeongyu/senpi`) |
+| Upstream commit at fork | `5678c2cd9ff8f4f8e66545fbe64084c56193fd09` |
+| Upstream commit (short) | `5678c2cd9` |
+| Upstream commit date | 2026-08-12 (`fix(images): limit historical transport replay`) |
+| Upstream ref | `main` (tag describe: `v2026.8.12-4-6-g5678c2cd9`) |
+| Local remote names | `origin` → `kht6163/omo`, `upstream` → `code-yeongyu/senpi` |
+
+When rebasing or syncing, compare against that commit/version first, then fetch `upstream/main`.
+
 Senpi is an extension-first coding-agent monorepo. Keep changes scoped, preserve upstream mergeability, and read the nearest `AGENTS.md` plus every applicable `changes.md` before editing.
 
 ## MANDATORY EXECUTION PROTOCOLS — NON-NEGOTIABLE

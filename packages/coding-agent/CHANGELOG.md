@@ -4,11 +4,18 @@
 
 ### Fixed
 
+- Startup "What's New" no longer reappears on every launch for CalVer builds with a day suffix
+  (for example `2026.8.12-4`). `lastChangelogVersion` comparison now parses only the leading
+  `major.minor.patch` instead of treating the `-N` suffix as `NaN` and resetting patch to `0`.
+
 ### New Features
 
 ### Breaking Changes
 
 ### Added
+
+- CLI package now exposes `pi` and `omo` bin aliases alongside `senpi`, so a global
+  `npm link` / install can invoke the agent as `omo`, `pi`, or `senpi`.
 
 - App-server clients can now receive extension-owned `extension_event` notifications and call loaded-thread
   `extension_request` handlers, bringing both directions of the opt-in `pi.rpc` channel to app/editor integrations
