@@ -5,7 +5,8 @@
  * catalog entry under a single Codex/Responses API (`cliproxyapi-codex-responses`)
  * because that is the package's unified CPA path. Claude models still need
  * Anthropic Messages framing (`/v1/messages`) so thinking, tool calls, and
- * session-title generation match Anthropic semantics.
+ * session-title generation match Anthropic semantics. CLIProxy also requires
+ * thinking to stay enabled or adaptive on every request (`clear_thinking_*`).
  *
  * These defaults run for every omopi user — no models.json entry required.
  * User `modelRoutes` / `modelOverrides` still win when they set a different api.
@@ -52,9 +53,15 @@ export function applyBuiltinGatewayRoutes(model: Model<Api>, providerId: string)
 		...model,
 		api: "anthropic-messages" as Api,
 		baseUrl: stripBackendApiBaseUrl(model.baseUrl),
+		// CLIProxy Claude catalogs sometimes omit `reasoning`. The Anthropic
+		// adapter only emits a thinking field when this is true.
+		reasoning: true,
 		compat: {
 			...model.compat,
 			forceAdaptiveThinking: forceAdaptive,
+			// CLIProxy `clear_thinking_*` rejects disabled/omitted thinking on
+			// every request, including regular chat after tool-history replay.
+			requiresEnabledThinking: true,
 		},
 	};
 }

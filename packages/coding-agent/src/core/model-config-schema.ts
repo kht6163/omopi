@@ -125,6 +125,7 @@ const AnthropicMessagesCompatSchema = Type.Object({
 	supportsToolChoice: Type.Optional(Type.Boolean()),
 	supportsForcedToolChoice: Type.Optional(Type.Boolean()),
 	forceAdaptiveThinking: Type.Optional(Type.Boolean()),
+	requiresEnabledThinking: Type.Optional(Type.Boolean()),
 	allowEmptySignature: Type.Optional(Type.Boolean()),
 	supportsToolReferences: Type.Optional(Type.Boolean()),
 	supportsWebSearch: Type.Optional(Type.Boolean()),

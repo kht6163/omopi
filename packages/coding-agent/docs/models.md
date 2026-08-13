@@ -500,6 +500,8 @@ By default senpi sends per-tool `eager_input_streaming: true`. If a proxy or Ant
 
 Some Anthropic models require adaptive thinking (`thinking.type: "adaptive"` plus `output_config.effort`) instead of the legacy budget-based thinking payload. Built-in models set this automatically. For custom providers or aliases that route to those models, set `forceAdaptiveThinking` to `true`.
 
+Some Anthropic-compatible gateways (CLIProxyAPI) reject `thinking.type: "disabled"` and omitted thinking with `clear_thinking_* requires thinking to be enabled or adaptive`. Set `requiresEnabledThinking` to `true` so thinking-off turns and tool-history replay keep an enabled or adaptive thinking field. The built-in CLIProxy Claude route sets this automatically.
+
 Some Anthropic-compatible providers emit thinking blocks with empty signatures and still expect them on replay. Set `allowEmptySignature` to `true` only for those providers; real Anthropic rejects empty thinking signatures.
 
 Built-in Anthropic models enable `supportsStrictTools` in their model metadata. Custom Anthropic-compatible models must set it to `true` when their endpoint accepts strict JSON-schema tool definitions.
@@ -515,6 +517,7 @@ Built-in Anthropic models enable `supportsStrictTools` in their model metadata. 
         "supportsEagerToolInputStreaming": false,
         "supportsLongCacheRetention": true,
         "forceAdaptiveThinking": true,
+        "requiresEnabledThinking": true,
         "allowEmptySignature": true
       },
       "models": [
@@ -536,6 +539,7 @@ Built-in Anthropic models enable `supportsStrictTools` in their model metadata. 
 | `sendSessionAffinityHeaders` | Whether to send `x-session-affinity` from the session id when caching is enabled. Default: auto-detected for known providers. |
 | `supportsCacheControlOnTools` | Whether the provider accepts Anthropic-style `cache_control` markers on tool definitions. Default: `true`. |
 | `forceAdaptiveThinking` | Whether to send adaptive thinking (`thinking.type: "adaptive"` plus `output_config.effort`) for this model. Built-in adaptive models set this automatically. Default: `false`. |
+| `requiresEnabledThinking` | Whether the provider requires `thinking` to be `enabled` or `adaptive` on every request. When true, thinking-off and tool-history degrade paths send low-effort enabled/adaptive thinking instead of `disabled`. Default: `false`. Built-in CLIProxy Claude routing sets this automatically. |
 | `allowEmptySignature` | Whether to replay empty thinking signatures as `signature: ""` instead of converting thinking to text. Default: `false`. |
 | `supportsStrictTools` | Whether the provider accepts strict JSON-schema tool definitions. Default: `false`; built-in Anthropic models enable it in generated metadata. |
 

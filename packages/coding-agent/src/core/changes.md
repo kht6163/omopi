@@ -1,5 +1,29 @@
 # changes
 
+## CLIProxy Claude regular chat keeps thinking enabled (2026-08-13)
+
+### What changed
+
+- `gateway-model-routes.ts` now sets `compat.requiresEnabledThinking: true` and
+  `reasoning: true` when rewriting CLIProxy Claude models to `anthropic-messages`.
+- `model-config-schema.ts` accepts `requiresEnabledThinking` on Anthropic compat.
+
+### Why
+
+- Title generation already sent `reasoning: "low"` on a fresh context. Regular chat
+  after tool history (or with thinking off) sent `thinking: { type: "disabled" }`, and
+  CLIProxy rejected it with `clear_thinking_* requires thinking to be enabled or adaptive`.
+
+### Why an extension could not do this
+
+- The built-in gateway rewrite owns the Claude wire format for every CLIProxy user.
+  The thinking field itself is emitted by `packages/ai`.
+
+### Expected merge conflict zones
+
+- LOW: `gateway-model-routes.ts` Claude rewrite object.
+- LOW: `model-config-schema.ts` Anthropic compat fields.
+
 ## OpenGateway display name for /login (2026-08-12)
 
 ### What changed

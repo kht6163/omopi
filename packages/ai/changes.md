@@ -1,5 +1,39 @@
 # changes.md — ai
 
+## Keep thinking enabled for CLIProxy-style Anthropic gateways (2026-08-13)
+
+### What changed
+
+- `src/types.ts`: added `AnthropicMessagesCompat.requiresEnabledThinking`.
+- `src/utils/prompt-cache-ttl.ts`: resolver defaults the flag to `false`.
+- `src/api/anthropic-messages.ts`: thinking-off and tool-history degrade paths send
+  adaptive (or budget-enabled) thinking at low effort when the flag is set, instead of
+  `thinking.type: "disabled"` or omitting thinking.
+- Tests cover thinking-off, `reasoning: false` catalog rows, and cross-model tool history.
+
+### Why
+
+- Built-in CLIProxy Claude routing sends regular chat through anthropic-messages. After a
+  tool turn (especially after switching from another provider), the adapter disabled
+  thinking and CLIProxy returned 400 `clear_thinking_* requires thinking to be enabled or adaptive`.
+
+### Why this cannot be expressed as an extension
+
+- The thinking field is chosen inside the Anthropic Messages adapter before extensions run.
+
+### Modified upstream files
+
+- `src/types.ts`
+- `src/utils/prompt-cache-ttl.ts`
+- `src/api/anthropic-messages.ts`
+- `test/anthropic-force-adaptive-thinking.test.ts`
+- `test/anthropic-cross-model-history.test.ts`
+
+### Expected merge conflict zones
+
+- MEDIUM: `api/anthropic-messages.ts` thinking configuration in `buildParams`.
+- LOW: Anthropic compat type and schema field lists.
+
 ## Follow Groq Qwen catalog replacement during generation (2026-08-04)
 
 ### What changed

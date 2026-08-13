@@ -116,6 +116,22 @@ describe("Anthropic cross-model history hardening", () => {
 		expect(payload.thinking?.type).toBe("disabled");
 	});
 
+	it("keeps adaptive thinking on tool-history replay when requiresEnabledThinking", async () => {
+		const { assistant, results } = foreignToolTurn([{ id: "call_abc", name: "bash" }]);
+		const context: Context = {
+			messages: [{ role: "user", content: "run tools", timestamp: Date.now() - 3000 }, assistant, ...results],
+		};
+		const gatewayModel: Model<"anthropic-messages"> = {
+			...model,
+			compat: { ...model.compat, forceAdaptiveThinking: true, requiresEnabledThinking: true },
+		};
+
+		const payload = await capturePayload(gatewayModel, context, { reasoning: "xhigh" });
+
+		expect(payload.thinking).toEqual({ type: "adaptive", display: "summarized" });
+		expect(payload.output_config).toEqual({ effort: "low" });
+	});
+
 	it("degrades thinking when replaying a Codex reasoning tool turn", async () => {
 		const { assistant, results } = foreignToolTurn([{ id: "call_codex", name: "bash" }]);
 		const codexAssistant: AssistantMessage = {

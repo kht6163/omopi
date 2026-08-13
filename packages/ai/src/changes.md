@@ -1,5 +1,27 @@
 # AI Source Changes
 
+## 2026-08-13 - Keep thinking enabled for CLIProxy-style Anthropic gateways
+
+### What changed and why
+
+- `AnthropicMessagesCompat.requiresEnabledThinking` marks gateways that reject both
+  `thinking.type: "disabled"` and a missing thinking field (`clear_thinking_* requires
+  thinking to be enabled or adaptive`).
+- `disableThinkingForRequest` and a `model.reasoning === false` fallback now send
+  adaptive thinking plus `output_config.effort: "low"` (or budget-enabled thinking)
+  instead of disabling or omitting thinking.
+- First-party Anthropic still degrades thinking on cross-model tool-history replay.
+
+### Why an extension could not do this
+
+- Thinking payload selection happens inside `api/anthropic-messages.ts` while building
+  the provider request, below any extension-visible hook.
+
+### Expected merge conflict zones
+
+- MEDIUM: `api/anthropic-messages.ts` thinking-disable branch in `buildParams`.
+- LOW: `src/types.ts` Anthropic compat fields and `utils/prompt-cache-ttl.ts` resolver.
+
 ## 2026-08-13 - Keep CLIProxyAPI WebSocket-only source patch compatible
 
 ### What changed and why

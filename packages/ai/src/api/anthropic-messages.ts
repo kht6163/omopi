@@ -1617,23 +1617,47 @@ function supportsNativeXhighEffort(model: Pick<Model<"anthropic-messages">, "id"
 	return matchesModelMarker(model, NATIVE_XHIGH_EFFORT_MODEL_MARKERS);
 }
 
+type ThinkingDisableCompat = {
+	supportsDisabledThinking: boolean;
+	requiresEnabledThinking: boolean;
+};
+
 /** True when the model cannot accept `thinking: {type: "disabled"}` on the wire. */
-function cannotDisableThinking(
-	model: Model<"anthropic-messages">,
-	compat: { supportsDisabledThinking: boolean },
-): boolean {
+function cannotDisableThinking(model: Model<"anthropic-messages">, compat: ThinkingDisableCompat): boolean {
 	if (!compat.supportsDisabledThinking) return true;
 	if (model.thinkingLevelMap?.off === null) return true;
 	return matchesModelMarker(model, DISABLED_THINKING_REJECTING_MODEL_MARKERS);
 }
 
+/** Keep thinking enabled/adaptive at the cheapest legal effort. */
+function enableRequiredThinking(params: MessageCreateParamsStreaming, model: Model<"anthropic-messages">): void {
+	delete (params as { output_config?: unknown }).output_config;
+	const display: AnthropicThinkingDisplay = "summarized";
+	if (supportsAdaptiveThinking(model)) {
+		params.thinking = { type: "adaptive", display } as MessageCreateParamsStreaming["thinking"];
+		params.output_config = { effort: "low" } as NonNullable<MessageCreateParamsStreaming["output_config"]>;
+		return;
+	}
+	params.thinking = {
+		type: "enabled",
+		budget_tokens: 1024,
+		display,
+	} as MessageCreateParamsStreaming["thinking"];
+}
+
 function disableThinkingForRequest(
 	params: MessageCreateParamsStreaming,
 	model: Model<"anthropic-messages">,
-	compat: { supportsDisabledThinking: boolean },
+	compat: ThinkingDisableCompat,
 ): void {
 	// A degraded/disabled turn must not retain the caller's higher effort.
 	delete (params as { output_config?: unknown }).output_config;
+	// CLIProxy-style gateways reject both `thinking.type: "disabled"` and a
+	// missing thinking field (`clear_thinking_* requires enabled or adaptive`).
+	if (compat.requiresEnabledThinking) {
+		enableRequiredThinking(params, model);
+		return;
+	}
 	if (cannotDisableThinking(model, compat)) {
 		delete params.thinking;
 		if (supportsAdaptiveThinking(model)) {
@@ -2017,6 +2041,10 @@ function buildParams(
 			// legal effort; use an explicit disabled block everywhere else.
 			disableThinkingForRequest(params, model, compat);
 		}
+	} else if (compat.requiresEnabledThinking) {
+		// Gateways that require enabled/adaptive thinking still need a thinking
+		// field when the catalog row forgot to set `reasoning: true`.
+		enableRequiredThinking(params, model);
 	}
 
 	// Anthropic rejects a thinking-enabled request whose final assistant turn
