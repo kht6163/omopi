@@ -1,5 +1,30 @@
 # changes.md — ai
 
+## Hide thinking off when requiresEnabledThinking (2026-08-13)
+
+### What changed
+
+- `src/models.ts` `getSupportedThinkingLevels` omits `off` when
+  `compat.requiresEnabledThinking` is true.
+
+### Why
+
+- CLIProxy Claude cannot disable thinking. Leaving `off` in the cycle made Shift+Tab
+  look like it worked while the request still sent adaptive/low.
+
+### Why this cannot be expressed as an extension
+
+- Level availability is owned by the shared model helper used by TUI, RPC, and SDK.
+
+### Modified upstream files
+
+- `src/models.ts`
+- `test/supports-xhigh.test.ts`
+
+### Expected merge conflict zones
+
+- LOW: `getSupportedThinkingLevels` filter body.
+
 ## Keep thinking enabled for CLIProxy-style Anthropic gateways (2026-08-13)
 
 ### What changed

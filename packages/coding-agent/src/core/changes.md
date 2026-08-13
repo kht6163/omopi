@@ -1,5 +1,28 @@
 # changes
 
+## Hide thinking off on CLIProxy Claude and claude-sdk-oauth (2026-08-13)
+
+### What changed
+
+- `gateway-model-routes.ts` sets `thinkingLevelMap.off: null` on routed CLIProxy Claude models.
+- `claude-sdk-oauth/index.ts` sets `off: null` (with the existing `minimal: null`) on the
+  mirrored Anthropic catalog.
+
+### Why
+
+- Both paths cannot turn thinking off. CLIProxy rejects disabled thinking; the Claude Code
+  SDK omits the thinking field on off and then defaults adaptive models back on.
+  First-party Anthropic API models still expose off.
+
+### Why an extension could not do this
+
+- These are built-in catalog rewrites that feed `getSupportedThinkingLevels`.
+
+### Expected merge conflict zones
+
+- LOW: `gateway-model-routes.ts` rewrite object.
+- LOW: `claude-sdk-oauth/index.ts` thinkingLevelMap.
+
 ## CLIProxy Claude regular chat keeps thinking enabled (2026-08-13)
 
 ### What changed

@@ -56,6 +56,11 @@ export function applyBuiltinGatewayRoutes(model: Model<Api>, providerId: string)
 		// CLIProxy Claude catalogs sometimes omit `reasoning`. The Anthropic
 		// adapter only emits a thinking field when this is true.
 		reasoning: true,
+		// Off is not a real control: CLIProxy rejects disabled thinking.
+		thinkingLevelMap: {
+			...model.thinkingLevelMap,
+			off: null,
+		},
 		compat: {
 			...model.compat,
 			forceAdaptiveThinking: forceAdaptive,

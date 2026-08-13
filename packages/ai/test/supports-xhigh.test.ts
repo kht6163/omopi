@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { getModel, getSupportedThinkingLevels, supportsMax, supportsXhigh } from "../src/compat.ts";
+import { clampThinkingLevel, getModel, getSupportedThinkingLevels, supportsMax, supportsXhigh } from "../src/compat.ts";
 import type { Model } from "../src/model.ts";
 import type { Api } from "../src/types.ts";
 
@@ -79,6 +79,27 @@ describe("getSupportedThinkingLevels", () => {
 		// Fable 5 rejects `thinking.type: "disabled"`, but "off" is still a real user choice:
 		// the Messages provider pins the cheapest effort instead of sending a thinking block.
 		expect(getSupportedThinkingLevels(model!)).toContain("off");
+	});
+
+	it("hides off when compat.requiresEnabledThinking is true", () => {
+		const model = maplessModel("anthropic-messages", "claude-opus-4-8", {
+			compat: { requiresEnabledThinking: true },
+		});
+		expect(getSupportedThinkingLevels(model)).not.toContain("off");
+		expect(getSupportedThinkingLevels(model)).toContain("low");
+	});
+
+	it("keeps off for first-party Anthropic Claude Opus 4.8", () => {
+		const model = getModel("anthropic", "claude-opus-4-8");
+		expect(model).toBeDefined();
+		expect(getSupportedThinkingLevels(model!)).toContain("off");
+	});
+
+	it("clamps off to the cheapest remaining level when requiresEnabledThinking hides off", () => {
+		const model = maplessModel("anthropic-messages", "vendor-claude", {
+			compat: { requiresEnabledThinking: true },
+		});
+		expect(clampThinkingLevel(model, "off")).toBe("minimal");
 	});
 
 	it("does not include xhigh or max for Claude Sonnet 4.5", () => {
