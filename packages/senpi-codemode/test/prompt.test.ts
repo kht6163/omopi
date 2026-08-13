@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildEvalPrompt, evalEmphasisStyle } from "../src/prompt/eval-prompt.ts";
+import { buildEvalPrompt } from "../src/prompt/eval-prompt.ts";
 
 type PromptOptions = {
 	readonly spawns: boolean;
@@ -89,10 +89,10 @@ describe("buildEvalPrompt", () => {
 		const node = buildEvalPrompt({ py: false, js: true, rb: false, jl: false }, { spawns: false }).description;
 
 		// When: their embedded reuse-chain examples are rendered.
-		// Then: only Python kernels carry examples, and those teach batch + tool bridging.
+		// Then: only Python kernels carry examples, and those teach persistent in-kernel reduction.
 		expect(python).toContain("Count all TypeScript source files under src/ excluding tests");
-		expect(python).toContain("tool.grep");
-		expect(python).toContain("parallel([");
+		expect(python).toContain("most_common");
+		expect(python).not.toContain("tool.grep");
 		expect(ruby).not.toContain("<examples>");
 		expect(node).not.toContain("<examples>");
 	});
@@ -125,84 +125,28 @@ describe("buildEvalPrompt", () => {
 	});
 
 	it("keeps eval-specific prompt guidelines stable", () => {
-		// Given: a registered eval tool with no active model id.
+		// Given: a registered eval tool.
 		// When: its prompt metadata is built.
 		const guidelines = buildEvalPrompt({ py: true, js: true, rb: true, jl: true }, { spawns: true }).promptGuidelines;
 
-		// Then: the system-prompt guidance carries the maximum-emphasis batching contract.
+		// Then: direct tools stay the default and eval is reserved for code-shaped work.
 		expect(guidelines).toEqual([
-			"**EVAL FIRST.** Any step needing MORE THAN ONE tool call MUST be ONE eval cell: run independent calls in parallel, wrap risky calls in try/except, and return distilled facts — NEVER a chain of single tool calls.",
+			"Use direct tools by default and issue known independent calls together; use eval only for persistent computation or when code must iterate, branch, transform, or reduce results.",
 			"Use eval reset only when a language kernel must be wiped; reset is scoped to the selected language.",
 		]);
 	});
 
-	it("maps model ids to emphasis dialects across provider id shapes", () => {
-		// Given: model ids as they appear across bundled provider catalogs.
-		// When/Then: each id resolves to its family dialect; unknown ids fall back to default.
-		const claudeIds = [
-			"claude-opus-4-8",
-			"anthropic/claude-fable-5",
-			"eu.anthropic.claude-sonnet-5",
-			"glm-5.2",
-			"@cf/zai-org/glm-4.7-flash",
-			"accounts/fireworks/models/glm-5p2",
-		];
-		const kimiIds = ["kimi-k2.6", "@cf/moonshotai/kimi-k2.7-code", "accounts/fireworks/models/kimi-k2p6"];
-		const gptIds = ["gpt-5.6", "gpt-5.2-codex", "@cf/openai/gpt-oss-120b"];
-		const codexIds = ["o3-mini", "codex-mini-latest"];
-		const defaultIds = ["gemini-2.5-flash", "deepseek-chat", "qwen3-coder", "minimax-m2.5"];
-		for (const id of claudeIds) expect(evalEmphasisStyle(id), id).toBe("claude");
-		for (const id of kimiIds) expect(evalEmphasisStyle(id), id).toBe("kimi");
-		for (const id of gptIds) expect(evalEmphasisStyle(id), id).toBe("gpt");
-		for (const id of codexIds) expect(evalEmphasisStyle(id), id).toBe("codex");
-		for (const id of defaultIds) expect(evalEmphasisStyle(id), id).toBe("default");
-		expect(evalEmphasisStyle(undefined)).toBe("default");
-	});
+	it("keeps direct tool calls native and reserves eval for code-shaped work", () => {
+		const prompt = buildEvalPrompt({ py: true, js: true, rb: false, jl: false }, { spawns: false }).description;
 
-	it("renders exactly one batching dialect selected by the model id", () => {
-		// Given: the same kernel set rendered for each model family.
-		const enabled = { py: true, js: true, rb: false, jl: false };
-		const render = (modelId?: string): string =>
-			buildEvalPrompt(enabled, modelId === undefined ? { spawns: false } : { spawns: false, modelId }).description;
-
-		// When: the descriptions are built.
-		const claude = render("claude-opus-4-8");
-		const gpt = render("gpt-5.6");
-		const kimi = render("kimi-k2.6");
-		const fallback = render();
-
-		// Then: each carries only its own dialect marker.
-		expect(claude).toContain("<eval_first_batching>");
-		expect(claude).toContain("your default execution surface");
-		expect(claude).not.toContain("EVAL IS YOUR PRIMARY EXECUTION SURFACE");
-		expect(gpt).toContain("<gpt_eval_dialect>");
-		expect(gpt).toContain("detach on timeout");
-		expect(gpt).not.toContain("<eval_first_batching>");
-		expect(gpt).not.toContain("EVAL IS YOUR PRIMARY EXECUTION SURFACE");
-		const kimiInstruction = kimi.slice(0, kimi.indexOf("<prelude>"));
-		expect(kimiInstruction).toContain("EVAL IS YOUR SUPERPOWER");
-		expect(kimiInstruction).not.toContain("NEVER kills the batch");
-		expect(kimiInstruction).not.toContain("<eval_first_batching>");
-		expect(fallback).toContain("EVAL IS YOUR PRIMARY EXECUTION SURFACE");
-		expect(fallback).toContain("parallel(thunks)");
-	});
-
-	it("tunes the batching guideline to the model dialect", () => {
-		// Given: the same kernel set with model ids from each family.
-		const enabled = { py: true, js: true, rb: true, jl: true };
-		const guideline = (modelId: string): string =>
-			buildEvalPrompt(enabled, { spawns: false, modelId }).promptGuidelines[0];
-
-		// When/Then: the first guideline is the family-tuned batching contract.
-		expect(guideline("claude-opus-4-8")).toBe(
-			"Prefer eval for any step needing more than one tool call: one cell that runs independent calls in parallel, handles per-call failures in code, and returns distilled facts.",
-		);
-		expect(guideline("gpt-5.6")).toBe(
-			"Use eval to compose tool work in one cell; long cells detach on timeout and notify on completion, so do not poll.",
-		);
-		expect(guideline("kimi-k2.6")).toBe(
-			"**EVAL IS YOUR SUPERPOWER — DEFAULT TO IT.** Execute EVERY multi-call step as ONE eval cell: run ALL independent calls simultaneously via parallel(thunks), handle failures per item in code, and return ONLY distilled facts.",
-		);
+		expect(prompt).toContain("Use direct session tools by default");
+		expect(prompt).toContain("issue them together in one assistant response");
+		expect(prompt).toContain("Do not wrap direct calls in eval just to batch them");
+		expect(prompt).toContain("persistent computation");
+		expect(prompt).toContain("iterating, branching, transforming, or reducing results in-kernel");
+		expect(prompt).not.toContain("EVAL FIRST");
+		expect(prompt).not.toContain("default execution surface");
+		expect(prompt).not.toContain("PRIMARY EXECUTION SURFACE");
 	});
 
 	it("renders the host-sizing note only when a host line is provided", () => {

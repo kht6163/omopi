@@ -20,15 +20,13 @@ function createModel(id: string): Model<Api> {
 
 const GPT_PRESETS = ["gpt-5", "gpt-5.2", "gpt-5.3-codex", "gpt-5.4", "gpt-5.5", "gpt-5.6"] as const;
 
-describe("GPT eval tool routing", () => {
-	it.each(GPT_PRESETS)("%s routes Code Mode orchestration separately from persistent eval work", (presetName) => {
+describe("GPT eval prompt integration", () => {
+	it.each(GPT_PRESETS)("%s keeps the shared eval selection guideline", (presetName) => {
 		// Given: a GPT preset with both Code Mode surfaces registered.
 		const settings: PromptPresetSettings = { promptPreset: presetName };
 		const model = createModel(presetName);
-		const evalGuideline = buildEvalPrompt(
-			{ py: true, js: true, rb: false, jl: false },
-			{ spawns: false, modelId: presetName },
-		).promptGuidelines[0];
+		const evalGuideline = buildEvalPrompt({ py: true, js: true, rb: false, jl: false }, { spawns: false })
+			.promptGuidelines[0];
 		const options = {
 			selectedTools: ["eval", "exec", "wait"],
 			toolSnippets: {
@@ -44,8 +42,7 @@ describe("GPT eval tool routing", () => {
 		// When: the system prompt is composed for that preset.
 		const preset = resolvePreset(model, settings, options);
 
-		// Then: its GPT-specific route prefers the public Code Mode executor for
-		// bounded orchestration while retaining eval's live multi-language policy.
+		// Then: the preset retains Code Mode's shared direct-tool-first rule.
 		if (!preset) {
 			throw new Error(`expected ${presetName} preset to resolve`);
 		}

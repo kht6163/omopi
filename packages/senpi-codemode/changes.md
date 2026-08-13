@@ -1,5 +1,38 @@
 # senpi-codemode fork changes
 
+## Direct-tool-first eval selection (2026-08-13)
+
+### What changed
+
+- Replaced the model-specific eval-first batching dialects with one shared rule:
+  use direct session tools by default, emit known independent calls together for
+  native host parallelism, and use eval only for persistent computation or
+  code-driven iteration, branching, transformation, and reduction.
+- Replaced the static `tool.grep` fan-out example with an in-kernel reduction
+  example and removed model-id prompt plumbing plus `model_select`
+  re-registration.
+
+### Why
+
+- The host already executes sibling direct tool calls in parallel while
+  preserving each tool's schema, structured result, error boundary, and native
+  rendering. Wrapping fixed MCP/document reads in Python added parsing and retry
+  failure modes without adding concurrency.
+- Current frontier models can issue native parallel tool calls without a
+  model-family-specific eval mandate. Eval remains useful when code actually
+  performs the iteration or transformation.
+
+### Why this cannot be expressed externally
+
+- Tool-selection guidance is embedded in the eval tool description and prompt
+  metadata, and the obsolete model-switch registration lived in the extension
+  factory. An external extension cannot replace either surface reliably.
+
+### Expected merge conflict zones
+
+- MEDIUM: `src/prompt/eval-prompt.ts` prompt wording and examples.
+- LOW: `src/index.ts` registration lifecycle and prompt tests/snapshots.
+
 ## Compiled binary runner sidecar resolution (2026-08-11)
 
 ### What changed

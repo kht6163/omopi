@@ -32,7 +32,6 @@ export interface CreateEvalToolOptions {
 	readonly renderers?: Pick<ToolDefinition<EvalInputSchema, EvalToolDetails>, "renderCall" | "renderResult">;
 	readonly spawns?: boolean;
 	readonly spawnDefaultAgent?: string;
-	readonly modelId?: string;
 	readonly hostLine?: string;
 }
 
