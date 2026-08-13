@@ -1,5 +1,34 @@
 # AI Source Changes
 
+## 2026-08-13 - Keep CLIProxyAPI WebSocket-only source patch compatible
+
+### What changed and why
+
+- `@router-for-me/pi-cliproxyapi-provider` rewrites the compiled
+  `api/openai-codex-responses.js` at load time so CLIProxyAPI stays on
+  WebSocket and never silently falls back to SSE. After fallback state moved
+  into `api/openai-codex-responses/fallback-state.ts`, that compiled file no
+  longer contained `websocketSseFallbackSessions.add(sessionId);` or
+  `stats.websocketFallbackActive = true;`, so the extension aborted with
+  "failed to load patched codex protocol" and registered no models.
+- `api/openai-codex-responses.ts` now keeps a local `recordWebSocketSseFallback`
+  wrapper that still owns those exact statements, then forwards to the
+  cooldown Map in `fallback-state.ts`. Official Codex SSE fallback and the
+  60-second recovery window are unchanged.
+
+### Why an extension could not do this
+
+- The third-party provider cannot load unless the compiled Codex adapter still
+  matches its source rewrite. An extension cannot change that compiled file
+  shape before its own factory runs.
+
+### Expected merge conflict zones
+
+- MEDIUM: `api/openai-codex-responses.ts` around WebSocket fallback recording
+  and session cleanup.
+- LOW: `test/cliproxy-codex-source-patch.test.ts` if the vendor patch
+  predicates change.
+
 ## 2026-08-12 - Throw-based sibling for the bounded assistant retry loop
 
 ### What changed and why
