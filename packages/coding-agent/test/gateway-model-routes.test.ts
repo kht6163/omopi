@@ -26,7 +26,9 @@ describe("applyBuiltinGatewayRoutes", () => {
 		const next = applyBuiltinGatewayRoutes(model, "cliproxyapi");
 		expect(next.api).toBe("anthropic-messages");
 		expect(next.baseUrl).toBe("http://127.0.0.1:8317");
+		expect(next.reasoning).toBe(true);
 		expect((next.compat as { forceAdaptiveThinking?: boolean } | undefined)?.forceAdaptiveThinking).toBe(true);
+		expect((next.compat as { requiresEnabledThinking?: boolean } | undefined)?.requiresEnabledThinking).toBe(true);
 	});
 
 	test("leaves GPT models on the codex API", () => {
@@ -60,5 +62,19 @@ describe("applyBuiltinGatewayRoutes", () => {
 		const next = applyBuiltinGatewayRoutes(model, "cpa-responses");
 		expect(next.api).toBe("anthropic-messages");
 		expect((next.compat as { forceAdaptiveThinking?: boolean } | undefined)?.forceAdaptiveThinking).toBe(false);
+		expect((next.compat as { requiresEnabledThinking?: boolean } | undefined)?.requiresEnabledThinking).toBe(true);
+		expect(next.reasoning).toBe(true);
+	});
+
+	test("sets reasoning true even when the catalog row omitted it", () => {
+		const model = makeModel({
+			id: "claude-opus-4-8",
+			api: CLIPROXYAPI_CODEX_API as Api,
+			baseUrl: "http://127.0.0.1:8317/backend-api",
+			reasoning: false,
+		});
+		const next = applyBuiltinGatewayRoutes(model, "cliproxyapi");
+		expect(next.reasoning).toBe(true);
+		expect((next.compat as { requiresEnabledThinking?: boolean } | undefined)?.requiresEnabledThinking).toBe(true);
 	});
 });

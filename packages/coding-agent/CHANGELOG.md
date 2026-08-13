@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- CLIProxyAPI Claude regular chat no longer fails with
+  `clear_thinking_* requires thinking to be enabled or adaptive` after a tool
+  turn or with thinking off. Built-in Claude routing now keeps thinking
+  enabled or adaptive on every request, not only session-title generation.
 - `@router-for-me/pi-cliproxyapi-provider` can load again on a fresh omopi
   install. The compiled Codex adapter once more contains the WebSocket-only
   transport rewrite surface that extension expects.

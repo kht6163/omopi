@@ -50,6 +50,7 @@ export function getAnthropicCompat(
 			model.compat?.sendSessionAffinityHeaders ?? !!(isFireworks || isCloudflareAiGatewayAnthropic),
 		supportsCacheControlOnTools: model.compat?.supportsCacheControlOnTools ?? !isFireworks,
 		supportsDisabledThinking: model.compat?.supportsDisabledThinking ?? !isXiaomi,
+		requiresEnabledThinking: model.compat?.requiresEnabledThinking ?? false,
 		supportsTemperature: model.compat?.supportsTemperature ?? true,
 		supportsToolChoice: model.compat?.supportsToolChoice ?? true,
 		supportsForcedToolChoice:

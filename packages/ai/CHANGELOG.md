@@ -10,6 +10,10 @@
 
 ### Fixed
 
+- Anthropic-compatible gateways can set `compat.requiresEnabledThinking` so
+  thinking-off turns and tool-history replay send enabled or adaptive thinking
+  instead of `thinking.type: "disabled"`, which CLIProxyAPI rejects with
+  `clear_thinking_* requires thinking to be enabled or adaptive`.
 - Restored the compiled `openai-codex-responses` source shape that
   `@router-for-me/pi-cliproxyapi-provider` rewrites for WebSocket-only
   transport, so the extension can load again after fallback state moved into

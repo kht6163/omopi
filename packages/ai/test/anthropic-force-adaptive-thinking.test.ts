@@ -204,4 +204,30 @@ describe("Anthropic forceAdaptiveThinking compat override", () => {
 		expect(payload.thinking).toEqual({ type: "disabled" });
 		expect(payload.output_config).toBeUndefined();
 	});
+
+	it("keeps adaptive thinking when requiresEnabledThinking and reasoning is off", async () => {
+		const payload = await capturePayload(
+			makeCustomModel({ forceAdaptiveThinking: true, requiresEnabledThinking: true }),
+		);
+
+		expect(payload.thinking).toEqual({ type: "adaptive", display: "summarized" });
+		expect(payload.output_config).toEqual({ effort: "low" });
+	});
+
+	it("keeps budget thinking when requiresEnabledThinking without adaptive", async () => {
+		const payload = await capturePayload(makeCustomModel({ requiresEnabledThinking: true }));
+
+		expect(payload.thinking).toEqual({ type: "enabled", budget_tokens: 1024, display: "summarized" });
+		expect(payload.output_config).toBeUndefined();
+	});
+
+	it("emits adaptive thinking when requiresEnabledThinking even if reasoning is false", async () => {
+		const payload = await capturePayload({
+			...makeCustomModel({ forceAdaptiveThinking: true, requiresEnabledThinking: true }),
+			reasoning: false,
+		});
+
+		expect(payload.thinking).toEqual({ type: "adaptive", display: "summarized" });
+		expect(payload.output_config).toEqual({ effort: "low" });
+	});
 });

@@ -1,3 +1,25 @@
+## CLIProxy Claude regular chat keeps thinking enabled (2026-08-13)
+
+### What changed
+
+- Built-in CLIProxy Claude routing now marks those models `requiresEnabledThinking`
+  and `reasoning: true`, so regular chat (not just title generation) sends enabled or
+  adaptive thinking instead of `disabled`.
+
+### Why
+
+- A user session on `cliproxyapi` / `claude-opus-4-8` failed a normal prompt after a
+  prior tool turn with `400 clear_thinking_* requires thinking to be enabled or adaptive`.
+  The title-generation path already sent `reasoning: "low"`; the main turn did not.
+
+### Why an extension could not do this
+
+- The rewrite is the built-in gateway default applied before user `modelRoutes`.
+
+### Expected merge conflict zones
+
+- LOW: `core/gateway-model-routes.ts` and Anthropic compat schema.
+
 ## Historical image transport limits (2026-08-12)
 
 ### What changed

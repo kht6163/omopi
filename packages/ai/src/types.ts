@@ -737,6 +737,16 @@ export interface AnthropicMessagesCompat {
 	 * Default: infer from adaptive Claude model ids/names when possible.
 	 */
 	forceAdaptiveThinking?: boolean;
+	/**
+	 * Whether the provider rejects `thinking: { type: "disabled" }` and omitted
+	 * thinking. Gateways such as CLIProxyAPI apply `clear_thinking_*` and require
+	 * `thinking` to be `enabled` or `adaptive` on every request, including
+	 * thinking-off turns and tool-history replay that would otherwise degrade.
+	 * When true, those paths send adaptive (or budget-enabled) thinking at low
+	 * effort instead of disabling or omitting it.
+	 * Default: false.
+	 */
+	requiresEnabledThinking?: boolean;
 	/** Whether to replay empty thinking signatures as `signature: ""` instead of converting thinking to text. Default: false. */
 	allowEmptySignature?: boolean;
 	/** Whether the provider supports Anthropic strict tool schemas. Default: false; generated Anthropic models enable it explicitly. */
