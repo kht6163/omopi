@@ -10,6 +10,11 @@
 
 ### Fixed
 
+- Restored the compiled `openai-codex-responses` source shape that
+  `@router-for-me/pi-cliproxyapi-provider` rewrites for WebSocket-only
+  transport, so the extension can load again after fallback state moved into
+  a separate module.
+
 ### Removed
 
 ## [2026.8.12-5] - 2026-08-12

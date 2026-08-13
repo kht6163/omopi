@@ -24,6 +24,8 @@ Utility modules with no lazy wrapper: `cloudflare.ts`, `github-copilot-headers.t
 
 `openai-codex-responses/` subdir: `fallback-state.ts` (WebSocket fallback state + cooldown), `reasoning.ts` (Codex reasoning summary normalizer).
 
+`openai-codex-responses.ts` keeps a local `recordWebSocketSseFallback` wrapper that still contains `websocketSseFallbackSessions.add(sessionId);` and `stats.websocketFallbackActive = true;`. `@router-for-me/pi-cliproxyapi-provider` searches the compiled `openai-codex-responses.js` for those exact statements. Do not move them into `fallback-state.ts`.
+
 ## LAZY BOUNDARY
 
 `lazy.ts` exports `lazyApi()` and `lazyStream()`. A `.lazy.ts` wrapper is the **only** sanctioned dynamic-import boundary in this package. Concrete modules use top-level imports only. `src/compat.ts` (one level up) re-exports all lazy wrappers and registers them via the api-registry.

@@ -58,7 +58,7 @@ import {
 	isWebSocketSseFallbackActive,
 	type OpenAICodexWebSocketDebugStats,
 	recordWebSocketFailure,
-	recordWebSocketSseFallback,
+	recordWebSocketSseFallback as recordWebSocketSseFallbackState,
 } from "./openai-codex-responses/fallback-state.ts";
 import { buildCodexReasoning, type CodexReasoningSummaryInput } from "./openai-codex-responses/reasoning.ts";
 import { applyOpenAICodexCacheAffinityHeaders, clampOpenAIPromptCacheKey } from "./openai-prompt-cache.ts";
@@ -83,6 +83,27 @@ const DEFAULT_WEBSOCKET_CONNECT_TIMEOUT_MS = 15_000;
 // endpoint (the same endpoint the official Codex client compresses against).
 const REQUEST_COMPRESSION_ZSTD_LEVEL = 3;
 const CODEX_TOOL_CALL_PROVIDERS = new Set(["openai", "openai-codex", "opencode"]);
+// Source-shape compatibility for @router-for-me/pi-cliproxyapi-provider.
+// That extension rewrites this compiled file to disable SSE fallback and
+// searches THIS module (not fallback-state.js) for these exact statements.
+const websocketSseFallbackSessions = new Set<string>();
+
+function recordWebSocketSseFallback(sessionId: string | undefined): void {
+	if (sessionId) {
+		websocketSseFallbackSessions.add(sessionId);
+		const stats = getOrCreateWebSocketDebugStats(sessionId);
+		stats.websocketFallbackActive = true;
+	}
+	recordWebSocketSseFallbackState(sessionId);
+}
+
+function clearCliproxyCompatFallbackSessions(sessionId?: string): void {
+	if (sessionId) {
+		websocketSseFallbackSessions.delete(sessionId);
+		return;
+	}
+	websocketSseFallbackSessions.clear();
+}
 const WEBSOCKET_MESSAGE_TOO_BIG_CLOSE_CODE = 1009;
 const CODEX_PREVIOUS_RESPONSE_STALE_CODES = new Set(["codex_previous_response_stale"]);
 const WEBSOCKET_CONNECTION_LIMIT_REACHED_CODE = "websocket_connection_limit_reached";
@@ -923,6 +944,7 @@ export function getOpenAICodexWebSocketDebugStats(sessionId: string): OpenAICode
 
 export function resetOpenAICodexWebSocketDebugStats(sessionId?: string): void {
 	clearWebSocketFallbackState(sessionId);
+	clearCliproxyCompatFallbackSessions(sessionId);
 }
 
 export function closeOpenAICodexWebSocketSessions(sessionId?: string): void {
@@ -934,6 +956,7 @@ export function closeOpenAICodexWebSocketSessions(sessionId?: string): void {
 		for (const entry of websocketSessionCache.get(sessionId)?.values() ?? []) closeEntry(entry);
 		websocketSessionCache.delete(sessionId);
 		clearWebSocketFallbackState(sessionId);
+		clearCliproxyCompatFallbackSessions(sessionId);
 		return;
 	}
 	for (const accountEntries of websocketSessionCache.values()) {
@@ -941,6 +964,7 @@ export function closeOpenAICodexWebSocketSessions(sessionId?: string): void {
 	}
 	websocketSessionCache.clear();
 	clearWebSocketFallbackState();
+	clearCliproxyCompatFallbackSessions();
 }
 
 registerSessionResourceCleanup(closeOpenAICodexWebSocketSessions);
