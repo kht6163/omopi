@@ -27,8 +27,9 @@ task-tool names are known.
   fallbacks.
 - JavaScript import rewriting for supported local modules and package imports
   in the persistent Node.js worker.
-- GPT models receive a terse `eval` prompt dialect that prioritizes composing
-  active tools through `tool.<name>(args)` and documents detach-on-timeout.
+- The prompt keeps direct tools as the default and reserves `eval` for
+  persistent computation or code-driven iteration, branching, transformation,
+  and reduction.
 
 ## Kernels
 

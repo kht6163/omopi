@@ -29,12 +29,10 @@ const SESSION_LIFECYCLE_EVENTS = [
 
 type SessionLifecycleEvent = (typeof SESSION_LIFECYCLE_EVENTS)[number];
 
-type CodemodeEvent = SessionLifecycleEvent | "model_select";
-
 export interface CodemodeExtensionAPI {
 	registerTool(tool: ReturnType<typeof createEvalTool>): void;
 	registerRemovedToolHint(name: string, hint: string): void;
-	on(event: CodemodeEvent, handler: (event: unknown, ctx: ExtensionContext) => Promise<void> | void): void;
+	on(event: SessionLifecycleEvent, handler: (event: unknown, ctx: ExtensionContext) => Promise<void> | void): void;
 	executeTool: AgentExecuteTool;
 	getActiveTools(): string[];
 	getAllTools(): readonly EvalSchemaToolInfo[];
@@ -56,8 +54,6 @@ export default function senpiCodemode(pi: CodemodeExtensionAPI, options: SenpiCo
 	const manager = new SessionManagerProxy();
 	const complete = options.complete ?? ((request, ctx) => createCompletionHandler()(ctx)(request));
 	const renderers = { renderCall: renderEvalCall, renderResult: renderEvalResult };
-	let activeRuntime: SessionRuntime | undefined;
-	let activeModelId: string | undefined;
 	let activeContext: ExtensionContext | undefined;
 	let activeCells: EvalDetachedCellManager | undefined;
 	const notifier = new EvalNotifier({
@@ -85,11 +81,7 @@ export default function senpiCodemode(pi: CodemodeExtensionAPI, options: SenpiCo
 	const emitWakeSourceState = (state: WakeSourceState): void => {
 		pi.events?.emit(WAKE_SOURCE_STATE_EVENT, state);
 	};
-	const registerEvalForRuntime = (
-		runtime: SessionRuntime,
-		modelId: string | undefined,
-		cellManager: EvalDetachedCellManager,
-	): void => {
+	const registerEvalForRuntime = (runtime: SessionRuntime, cellManager: EvalDetachedCellManager): void => {
 		pi.registerTool(
 			createEvalTool({
 				enabledLanguages: runtime.enabledLanguages,
@@ -106,14 +98,11 @@ export default function senpiCodemode(pi: CodemodeExtensionAPI, options: SenpiCo
 				spawns: runtime.spawns,
 				spawnDefaultAgent: runtime.settings.taskTools.task,
 				hostLine: hostLine(),
-				...(modelId === undefined ? {} : { modelId }),
 			}),
 		);
 	};
 	const dropRuntime = async (): Promise<void> => {
 		const cells = activeCells;
-		activeRuntime = undefined;
-		activeModelId = undefined;
 		activeCells = undefined;
 		statusTicker.stop();
 		await cells?.dispose();
@@ -169,24 +158,11 @@ export default function senpiCodemode(pi: CodemodeExtensionAPI, options: SenpiCo
 		activeCells = cellManager;
 		// The goal builtin clears its per-session counts at session_start; re-publish our snapshot.
 		cellManager.publishWakeSourceState();
-		activeRuntime = runtime;
-		activeModelId = ctx.model?.id;
-		registerEvalForRuntime(runtime, activeModelId, cellManager);
+		registerEvalForRuntime(runtime, cellManager);
 	});
 	pi.on("session_shutdown", async () => dropRuntime());
 	pi.on("session_before_switch", async () => dropRuntime());
 	pi.on("session_before_fork", async () => dropRuntime());
-	pi.on("model_select", async (event, ctx) => {
-		activeContext = ctx;
-		const runtime = activeRuntime;
-		if (runtime === undefined) return;
-		const modelId = modelIdFrom(event);
-		if (modelId === undefined || modelId === activeModelId) return;
-		activeModelId = modelId;
-		const cellManager = activeCells;
-		if (cellManager === undefined) return;
-		registerEvalForRuntime(runtime, modelId, cellManager);
-	});
 }
 
 function hostLine(): string {
@@ -194,13 +170,6 @@ function hostLine(): string {
 	return [`${os.platform()} ${os.arch()}`, cpu, `${os.availableParallelism()} cores`]
 		.filter((part): part is string => !!part)
 		.join(" \u00b7 ");
-}
-
-function modelIdFrom(event: unknown): string | undefined {
-	if (typeof event !== "object" || event === null || !("model" in event)) return undefined;
-	const model = event.model;
-	if (typeof model !== "object" || model === null || !("id" in model)) return undefined;
-	return typeof model.id === "string" ? model.id : undefined;
 }
 
 export { enabledLanguagesFrom };

@@ -6,8 +6,8 @@ the persistent-kernel `eval` tool for JavaScript, Python, Ruby, and Julia.
 ## STRUCTURE
 
 ```text
-src/index.ts                     Extension factory: registers baseline eval, re-registers at session_start after runtime resolution, re-registers on model_select when active model changes
-src/prompt/                      Model-aware eval prompt templates and batching dialect selection
+src/index.ts                     Extension factory: registers baseline eval and re-registers at session_start after runtime resolution
+src/prompt/                      Eval prompt templates and direct-tool/eval selection guidance
 src/interpreters/                Interpreter availability detection (detect.ts)
 src/config/                      Settings schema, defaults, env overrides
 src/extension/                   Session generations and kernel ownership
@@ -29,9 +29,10 @@ test/                            Vitest contracts and the omp parity ledger
 
 - `eval` is registered at extension load and re-registered at `session_start`
   after settings, interpreter availability, and active task-tool names resolve.
-- Eval prompt dialect is selected from the active model id; GPT models receive a
-  terse composition-forward dialect that documents detached-cell completion.
-  Host/workstation context is explicit; renderer/status semantics are structured.
+- Direct tools are the default for known calls and sibling calls run in the
+  host's native parallel batch. Eval is reserved for persistent computation or
+  code-driven iteration, branching, transformation, and reduction.
+- Host/workstation context is explicit; renderer/status semantics are structured.
 - Session generations fence old kernels and callbacks. A retired generation
   must not emit into a newer session.
 - Kernels persist state per language, while per-cell callbacks are rebound for

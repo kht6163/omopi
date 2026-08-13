@@ -8,6 +8,11 @@
 
 ### Changed
 
+- Prefer native direct tool calls, including sibling parallel calls, and reserve
+  `eval` for persistent computation or code-driven iteration, branching,
+  transformation, and reduction. Model-specific eval-first dialects and
+  model-switch prompt re-registration were removed.
+
 ### Fixed
 
 ### Removed

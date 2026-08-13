@@ -28,7 +28,6 @@ export function createEvalTool(options: CreateEvalToolOptions): ToolDefinition<E
 	const prompt = buildEvalPrompt(options.enabledLanguages, {
 		spawns: options.spawns ?? false,
 		...(options.spawnDefaultAgent === undefined ? {} : { spawnDefaultAgent: options.spawnDefaultAgent }),
-		...(options.modelId === undefined ? {} : { modelId: options.modelId }),
 		...(options.hostLine === undefined ? {} : { hostLine: options.hostLine }),
 	});
 	const languages = enabledLanguageList(options.enabledLanguages);
