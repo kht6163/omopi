@@ -1,4 +1,4 @@
-import type { Api, Model } from "@earendil-works/pi-ai";
+import { type Api, getSupportedThinkingLevels, type Model } from "@earendil-works/pi-ai";
 import { describe, expect, test } from "vitest";
 import { applyBuiltinGatewayRoutes, CLIPROXYAPI_CODEX_API } from "../src/core/gateway-model-routes.ts";
 
@@ -76,5 +76,8 @@ describe("applyBuiltinGatewayRoutes", () => {
 		const next = applyBuiltinGatewayRoutes(model, "cliproxyapi");
 		expect(next.reasoning).toBe(true);
 		expect((next.compat as { requiresEnabledThinking?: boolean } | undefined)?.requiresEnabledThinking).toBe(true);
+		expect(next.thinkingLevelMap?.off).toBeNull();
+		expect(getSupportedThinkingLevels(next)).not.toContain("off");
+		expect(getSupportedThinkingLevels(next)).toContain("low");
 	});
 });

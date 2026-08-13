@@ -8,6 +8,9 @@
 
 ### Changed
 
+- `getSupportedThinkingLevels` no longer includes `off` when
+  `compat.requiresEnabledThinking` is true.
+
 ### Fixed
 
 - Anthropic-compatible gateways can set `compat.requiresEnabledThinking` so

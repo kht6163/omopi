@@ -675,12 +675,20 @@ export function calculateCost<TApi extends Api>(model: Model<TApi>, usage: Usage
 
 const EXTENDED_THINKING_LEVELS: ModelThinkingLevel[] = ["off", "minimal", "low", "medium", "high", "xhigh", "max"];
 
+function requiresEnabledThinking(model: Model<Api>): boolean {
+	const compat = model.compat;
+	return Boolean(compat && "requiresEnabledThinking" in compat && compat.requiresEnabledThinking === true);
+}
+
 export function getSupportedThinkingLevels<TApi extends Api>(model: Model<TApi>): ModelThinkingLevel[] {
 	if (!model.reasoning) return ["off"];
 
 	return EXTENDED_THINKING_LEVELS.filter((level) => {
 		const mapped = model.thinkingLevelMap?.[level];
 		if (mapped === null) return false;
+		// Gateways that cannot turn thinking off still advertise `off` unless we
+		// hide it here. Selecting it would only send the cheapest legal effort.
+		if (level === "off" && requiresEnabledThinking(model)) return false;
 		if (level === "xhigh") return supportsXhigh(model);
 		if (level === "max") return supportsMax(model);
 		return true;

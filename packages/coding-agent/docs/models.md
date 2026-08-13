@@ -500,7 +500,9 @@ By default senpi sends per-tool `eager_input_streaming: true`. If a proxy or Ant
 
 Some Anthropic models require adaptive thinking (`thinking.type: "adaptive"` plus `output_config.effort`) instead of the legacy budget-based thinking payload. Built-in models set this automatically. For custom providers or aliases that route to those models, set `forceAdaptiveThinking` to `true`.
 
-Some Anthropic-compatible gateways (CLIProxyAPI) reject `thinking.type: "disabled"` and omitted thinking with `clear_thinking_* requires thinking to be enabled or adaptive`. Set `requiresEnabledThinking` to `true` so thinking-off turns and tool-history replay keep an enabled or adaptive thinking field. The built-in CLIProxy Claude route sets this automatically.
+Some Anthropic-compatible gateways (CLIProxyAPI) reject `thinking.type: "disabled"` and omitted thinking with `clear_thinking_* requires thinking to be enabled or adaptive`. Set `requiresEnabledThinking` to `true` so thinking-off turns and tool-history replay keep an enabled or adaptive thinking field. The built-in CLIProxy Claude route sets this automatically and hides `off` from the thinking-level cycle.
+
+`claude-sdk-oauth` also hides `off` (and `minimal`). The Claude Code SDK omits thinking when those levels are selected and then defaults adaptive models back on, so the UI no longer offers a control that does nothing. First-party Anthropic API models still expose `off`.
 
 Some Anthropic-compatible providers emit thinking blocks with empty signatures and still expect them on replay. Set `allowEmptySignature` to `true` only for those providers; real Anthropic rejects empty thinking signatures.
 

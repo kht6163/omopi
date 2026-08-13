@@ -1,5 +1,22 @@
 # AI Source Changes
 
+## 2026-08-13 - Hide thinking off when the provider cannot disable thinking
+
+### What changed and why
+
+- `getSupportedThinkingLevels` omits `off` when `compat.requiresEnabledThinking` is true.
+  Those gateways reject `thinking.type: "disabled"` and a missing thinking field, so the
+  UI control would only send the cheapest legal effort.
+- First-party Anthropic models still expose `off`.
+
+### Why an extension could not do this
+
+- Thinking-level availability is computed in `packages/ai` before the session UI cycle.
+
+### Expected merge conflict zones
+
+- LOW: `src/models.ts` `getSupportedThinkingLevels` filter.
+
 ## 2026-08-13 - Keep thinking enabled for CLIProxy-style Anthropic gateways
 
 ### What changed and why

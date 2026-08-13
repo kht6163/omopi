@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { Api, Model } from "@earendil-works/pi-ai";
 import { getModels } from "@earendil-works/pi-ai/compat";
 import { getAgentDir } from "../../../../config.ts";
 import type { ExtensionAPI } from "../../types.ts";
@@ -16,6 +17,17 @@ export type ClaudeSdkOauthExtensionDeps = {
 	readAmbientAuthStatus?: () => Promise<boolean>;
 };
 
+/** Levels the Claude Code SDK cannot honor. Off/minimal omit thinking and the SDK defaults adaptive on. */
+export function claudeSdkOauthThinkingLevelMap(
+	base: Model<Api>["thinkingLevelMap"],
+): NonNullable<Model<Api>["thinkingLevelMap"]> {
+	return {
+		...base,
+		off: null,
+		minimal: null,
+	};
+}
+
 const MODELS = getModels("anthropic").map((model) => ({
 	id: model.id,
 	name: model.name,
@@ -24,10 +36,7 @@ const MODELS = getModels("anthropic").map((model) => ({
 	cost: model.cost,
 	contextWindow: model.contextWindow,
 	maxTokens: model.maxTokens,
-	thinkingLevelMap: {
-		...model.thinkingLevelMap,
-		minimal: null,
-	},
+	thinkingLevelMap: claudeSdkOauthThinkingLevelMap(model.thinkingLevelMap),
 }));
 
 function readStoredCredential(providerId: string): ClaudeSdkOauthCredential | undefined {

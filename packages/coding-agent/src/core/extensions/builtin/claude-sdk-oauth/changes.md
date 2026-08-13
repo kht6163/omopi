@@ -1,5 +1,27 @@
 # claude-sdk-oauth extension changes
 
+## 2026-08-13 - Hide thinking off (and keep minimal hidden)
+
+### What changed
+
+- Catalog `thinkingLevelMap` now sets `off: null` next to the existing `minimal: null`.
+- Shift+Tab / RPC available levels start at `low` for every mirrored Claude model.
+
+### Why
+
+- `buildClaudeSdkOauthQueryOptions` only sends adaptive thinking when `reasoning` is
+  truthy. Off omits `thinking`, and the Claude Agent SDK defaults adaptive models
+  back to thinking. The UI control did nothing.
+
+### Why an extension could not handle it
+
+- The catalog is registered by this builtin provider before any external extension
+  can change thinking-level availability.
+
+### Expected merge-conflict zones
+
+- LOW: `index.ts` `thinkingLevelMap` object.
+
 ## 2026-08-12 - Account-aware default auth lane (issue #6784)
 
 ### What changed

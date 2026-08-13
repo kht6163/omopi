@@ -27,6 +27,9 @@
 
 ### Changed
 
+- Thinking level `off` is no longer selectable on `claude-sdk-oauth` or
+  CLIProxyAPI Claude. Those paths cannot disable thinking; first-party
+  Anthropic API models still offer `off`.
 - Install and `npm link` expose only the `omopi` command. `omo`, `pi`, and `senpi` are not registered as bins so they stay with their own tools.
 
 ### Removed
